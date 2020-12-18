@@ -12,7 +12,7 @@ class Pill {
 
   return_piece = () => {
     return [{id: this.pill_id, color: this.color1, state: this.state, rotation: this.rotation},
-      {id: this.pill_id, color: this.color2, state: this.state, rotation: this.rotation}]
+      {id: this.pill_id, color: this.color2, state: this.state, rotation: this.rotation + 2}]
 
   };
 }
