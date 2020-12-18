@@ -1,7 +1,9 @@
 'use strict';
 
+let pill_counter = 0;
 class Pill {
-  constructor(color1, color2, rotation, state) {
+  constructor(pill_id, color1, color2, rotation, state) {
+    this.pill_id = pill_id;
     this.color1 = color1;
     this.color2 = color2;
     this.rotation = rotation;
@@ -9,20 +11,13 @@ class Pill {
   }
 
   return_piece = () => {
-    if (this.rotation === 0) {
-      return [
-        [this.color2, 0],
-        [this.color1, 0],
-      ];
-    } else {
-      return [
-        [0, 0],
-        [this.color1, this.color2],
-      ]
-    }
+    return [{id: this.pill_id, color: this.color1, state: this.state, rotation: this.rotation},
+      {id: this.pill_id, color: this.color2, state: this.state, rotation: this.rotation}]
+
   };
 }
 
 const create_pill = () => {
-  pill = new Pill(random_color(), random_color(), random_0_1(), 0);
+  pill_counter++;
+  pill = new Pill(pill_counter, random_color(), random_color(), 1, 1);
 };
