@@ -22,10 +22,16 @@ body {
   height: calc(480px / 16)
 }
 
+.row:nth-child(1) > .item {
+  background: black;
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+}
+
 .item {
   display: inline-block;
   width: 30px;
   height: 30px;
   background: white;
-  box-shadow: inset 0 0 1px #000;
 }

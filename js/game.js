@@ -16,6 +16,6 @@ class Game {
     game_interval = setInterval(() => {
       board.fall();
       board.draw();
-    }, 1000)
-  }
+    }, 500)
+  };
 }

@@ -27,7 +27,12 @@ game.init();
 start.addEventListener('click', () => {
   game.start();
 });
-
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') board.move_left();
+  else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') board.move_right();
+  else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') board.rotate(false);
+  else if (e.key === 'Shift') console.log('Shiftcik')
+});
 
 
 
