@@ -35,166 +35,137 @@ class Game {
       })
     })
   };
+  collide = (matrix, rotation) => {
+    if (rotation === 1) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0 ||
+      matrix[pill.y2 + 1][pill.x2] !== 0;
+    else if (rotation === 0) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0
+  };
 
   fall = (matrix) => {
-    console.log(pill)
-    let y = pill.findPill(1).row;
-    let x = pill.findPill(1).id;
-    let rotation = pill.findPill(1).rotation;
+    let y = pill.y
+    let y2 = pill.y2
+    let x = pill.x
+    let x2 = pill.x2
+    let rotation = pill.rotation;
     if (rotation === 1) { // pozioma
-      let current_level = matrix[y];
-      let down_level = matrix[y + 1];
-      if (!down_level || down_level[x] !== 0 || down_level[x + 1] !== 0) {
-        matrix.forEach(row => {
-          row.forEach(item => {
-            if (item.state === 1) item.state = 0;
-          })
-        });
+      if (this.collide(board.matrix, pill.rotation)) {
+        pill.state = 0;
         clearInterval(game_interval);
         game.init();
         game.start();
-      } else if (down_level[x] === 0 && down_level[x + 1] === 0) {
-        down_level[x] = current_level[x];
-        down_level[x + 1] = current_level[x + 1];
-        current_level[x] = 0;
-        current_level[x + 1] = 0
+      } else {
+        pill.y += 1;
+        pill.y2 += 1;
+        matrix[pill.y][x] = pill.return_piece()[0]
+        matrix[pill.y2][x2] = pill.return_piece()[1]
+        matrix[y][x] = 0
+        matrix[y2][x2] = 0
       }
     } else { //pionowa
-      let prev_level = matrix[y - 1];
-      let current_level = matrix[y];
-      let down_level = matrix[y + 1];
-      if (!down_level || down_level[x] !== 0) {
-        matrix.forEach(row => {
-          row.forEach(item => {
-            if (item.state === 1) item.state = 0;
-          })
-        });
+      if (this.collide(board.matrix, pill.rotation)) {
+        pill.state = 0;
         clearInterval(game_interval);
         game.init();
         game.start();
-      } else if (down_level[x] === 0) {
-        down_level[x] = current_level[x];
-        current_level[x] = prev_level[x];
-        prev_level[x] = 0;
-
+      } else {
+        pill.x2 = pill.x
+        pill.y += 1;
+        pill.y2 += 1;
+        matrix[pill.y][pill.x] = pill.return_piece()[0]
+        matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+        matrix[y - 1][x] = 0
+        matrix[y2][x2] = 0
       }
     }
   };
 
   rotate = (direction, matrix) => { //false UP/lewo true Shift/prawo
-    // if (game.active) {
-    if (!direction) {
-      let y = pill.findPill(1).row;
-      let x = pill.findPill(1).id;
-      let rotation = pill.findPill(1).rotation;
-      if (rotation === 1 && matrix[y - 1][x] === 0) {
-        matrix[y][x].rotation = 0;
-        matrix[y][x + 1].rotation = 2;
-        matrix[y - 1][x] = matrix[y][x + 1];
-        matrix[y][x + 1] = 0;
-        game.draw(matrix);
-      } else if (rotation === 0 && matrix[y][x + 1] === 0) {
-        let y = pill.findPill(3).row;
-        let x = pill.findPill(3).id;
-        matrix[y + 1][x + 1] = matrix[y + 1][x];
-        matrix[y + 1][x + 1].rotation = 3;
-        matrix[y + 1][x] = matrix[y][x];
-        matrix[y + 1][x].rotation = 1;
-        matrix[y][x] = 0;
-        game.draw(matrix);
-      } else if (rotation === 0 && matrix[y][x - 1] === 0 &&
-        !matrix[y][x + 1]) {
-        let y = pill.findPill(3).row;
-        let x = pill.findPill(3).id;
-        matrix[y + 1][x].rotation = 3;
-        matrix[y + 1][x - 1] = matrix[y][x];
-        matrix[y + 1][x - 1].rotation = 1;
-        matrix[y][x] = 0;
-        game.draw(matrix);
-      }
+    if (game.active) {
+      if (!direction) {
+        if (pill.rotation === 1 && matrix[pill.y - 1][pill.x] === 0) {
+          pill.rotation_update(0, 2)
+          pill.y2 = pill.y - 1
+          pill.x2 = pill.x
+          matrix[pill.y][pill.x] = pill.return_piece()[0]
+          matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+          matrix[pill.y][pill.x + 1] = 0;
+          game.draw(matrix);
+        } else if (pill.rotation === 0 && matrix[pill.y][pill.x + 1] === 0) {
+          pill.rotation_update(1, 3);
+          pill.y2 = pill.y
+          pill.x2 = pill.x + 1
+          pill.switch()
+          matrix[pill.y][pill.x] = pill.return_piece()[0]
+          matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+          matrix[pill.y - 1][pill.x] = 0;
+          game.draw(matrix);
+        } else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 &&
+          !matrix[pill.y][pill.x + 1]) {
+          pill.rotation_update(1, 3)
+          matrix[pill.y2][pill.x2] = 0;
+          pill.y2++
+          pill.x--
+          pill.switch()
+          matrix[pill.y][pill.x] = pill.return_piece()[0]
+          matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+          game.draw(matrix);
+        }
     } else {
-      let y = pill.findPill(1).row;
-      let x = pill.findPill(1).id;
-      let rotation = pill.findPill(1).rotation;
-      if (rotation === 1 && matrix[y - 1][x] === 0) {
-        matrix[y - 1][x] = matrix[y][x];
-        matrix[y - 1][x].rotation = 2;
-        matrix[y][x] = matrix[y][x + 1]
-        matrix[y][x].rotation = 0;
-        matrix[y][x + 1] = 0
-        game.draw(matrix);
-      } else if (rotation === 0 && matrix[y][x + 1] === 0) {
-        let y = pill.findPill(3).row;
-        let x = pill.findPill(3).id;
-        matrix[y + 1][x + 1] = matrix[y][x];
-        matrix[y + 1][x + 1].rotation = 3;
-        matrix[y + 1][x].rotation = 1;
-        matrix[y][x] = 0;
-        game.draw(matrix);
-      } else if (rotation === 0 && matrix[y][x - 1] === 0 &&
-        !matrix[y][x + 1]) {
-        let y = pill.findPill(3).row;
-        let x = pill.findPill(3).id;
-        matrix[y + 1][x - 1] = matrix[y + 1][x];
-        matrix[y + 1][x] = matrix[y][x];
-        matrix[y + 1][x].rotation = 3;
-        matrix[y + 1][x - 1].rotation = 1;
-        matrix[y][x] = 0;
-        game.draw(matrix);
+        if (pill.rotation === 1 && matrix[pill.y - 1][pill.x] === 0) {
+          pill.rotation_update(0, 2)
+          pill.y2--
+          pill.x2--
+          pill.switch()
+          matrix[pill.y][pill.x] = pill.return_piece()[0]
+          matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+          matrix[pill.y][pill.x + 1] = 0;
+          game.draw(matrix);
+        } else if (pill.rotation === 0 && matrix[pill.y][pill.x + 1] === 0) {
+          pill.rotation_update(1, 3);
+          pill.y2 = pill.y
+          pill.x2 = pill.x + 1
+          matrix[pill.y][pill.x] = pill.return_piece()[0]
+          matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+          matrix[pill.y - 1][pill.x] = 0;
+          game.draw(matrix);
+        } else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 &&
+          !matrix[pill.y][pill.x + 1]) {
+          pill.rotation_update(1, 3)
+          matrix[pill.y2][pill.x2] = 0;
+          pill.y2++
+          pill.x--
+          matrix[pill.y][pill.x] = pill.return_piece()[0]
+          matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+          game.draw(matrix);
+        }
       }
     }
-    // }
-
-
   };
 
+  move = (matrix, where, rotation) => {
+    pill.x += where
+    pill.x2 += where
+    matrix[pill.y][pill.x] = pill.return_piece()[0]
+    matrix[pill.y2][pill.x2] = pill.return_piece()[1]
+    if (where > 0) {
+      matrix[pill.y][pill.x - 1] = 0;
+      rotation ? matrix[pill.y2][pill.x2 - 1] = 0 : null
+    } else {
+      matrix[pill.y2][pill.x2 + 1] = 0;
+      rotation ? matrix[pill.y][pill.x + 1] = 0 : null
+    }
+    game.draw(matrix);
+  }
   move_left = (matrix) => {
     if (game.active) {
-      let y = pill.findPill(1).row;
-      let x = pill.findPill(1).id;
-      let rotation = pill.findPill(1).rotation;
-      if (rotation === 1) { // Mamy je w poziomie
-        if (matrix[y][x - 1] === 0) {
-          matrix[y][x - 1] = matrix[y][x];
-          matrix[y][x] = matrix[y][x + 1];
-          matrix[y][x + 1] = 0;
-          game.draw(matrix);
-        }
-      } else { // mamy je w pionie
-        if (matrix[y][x - 1] === 0 && matrix[y - 1][x - 1] === 0) {
-          matrix[y][x - 1] = matrix[y][x];
-          matrix[y - 1][x - 1] = matrix[y - 1][x];
-          matrix[y][x] = 0;
-          matrix[y - 1][x] = 0;
-          game.draw(matrix);
-        }
-      }
+      if (pill.rotation === 1 && matrix[pill.y][pill.x - 1] === 0) this.move(matrix, -1, false)
+      else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 && matrix[pill.y2][pill.x2 - 1] === 0) this.move(matrix, -1, true)
     }
   };
-
   move_right = (matrix) => {
     if (game.active) {
-      let y = pill.findPill(1).row;
-      let x = pill.findPill(1).id;
-      let rotation = pill.findPill(1).rotation;
-      if (rotation === 1) { // Mamy je w poziomie
-        if (matrix[y][x + 2] === 0) {
-          matrix[y][x + 2] = matrix[y][x + 1];
-          matrix[y][x + 1] = matrix[y][x];
-          matrix[y][x] = 0;
-          game.draw(matrix);
-        }
-      } else { // mamy je w pionie
-        if (matrix[y][x + 1] === 0 && matrix[y - 1][x + 1] === 0) {
-          matrix[y][x + 1] = matrix[y][x];
-          matrix[y - 1][x + 1] = matrix[y - 1][x];
-          matrix[y][x] = 0;
-          matrix[y - 1][x] = 0;
-          game.draw(matrix);
-        }
-      }
+      if (pill.rotation === 1 && matrix[pill.y2][pill.x2 + 1] === 0 && matrix[pill.y2][pill.x2 + 1] === 0) this.move(matrix, 1, false)
+      else if (matrix[pill.y][pill.x + 1] === 0 && matrix[pill.y - 1][pill.x + 1] === 0) this.move(matrix, 1, true)
     }
-
   };
-
 }

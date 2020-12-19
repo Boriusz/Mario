@@ -4,28 +4,49 @@ let pill_counter = 0;
 class Pill {
   constructor(pill_id, color1, color2, rotation, state) {
     this.pill_id = pill_id;
-    this.color1 = color1;
+    this.color = color1;
     this.color2 = color2;
     this.rotation = rotation;
+    this.rotation2 = this.rotation + 2
     this.state = state;
+    this.y = 1;
+    this.y2 = 1;
+    this.x = 3;
+    this.x2 = 4;
+  }
+
+  rotation_update = (arg, arg2) => {
+    this.rotation = arg
+    this.rotation2 = arg2
+  };
+
+  switch_rotation = () => {
+    let rotation = this.rotation
+    this.rotation = this.rotation2
+    this.rotation2 = rotation
+  }
+
+  switch = () => {
+    let color = this.color
+    this.color = this.color2
+    this.color2 = color
   }
 
   return_piece = () => {
-    return [{id: this.pill_id, color: this.color1, state: this.state, rotation: this.rotation},
-      {id: this.pill_id, color: this.color2, state: this.state, rotation: this.rotation + 2}]
+    return [{
+      id: this.pill_id, color: this.color, state: this.state, rotation: this.rotation, coords: {
+        y: this.y,
+        x: this.x
+      }
+    },
+      {
+        id: this.pill_id, color: this.color2, state: this.state, rotation: this.rotation2, coords: {
+          y: this.y2,
+          x: this.x2
+        }
+      }]
 
   };
-
-  findPill = (rot) => {
-    for (let realm of board.matrix) {
-      let returner = realm.findIndex(el => el.state === 1 && (el.rotation === rot || el.rotation === rot - 1));
-      if (returner !== -1) return {
-        row: board.matrix.findIndex(el => el === realm),
-        id: returner, rotation: realm[returner].rotation
-      };
-    }
-  };
-
 }
 
 const create_pill = () => {
