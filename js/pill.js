@@ -24,7 +24,7 @@ class Pill {
     let rotation = this.rotation
     this.rotation = this.rotation2
     this.rotation2 = rotation
-  }
+  };
 
   switch = () => {
     let color = this.color

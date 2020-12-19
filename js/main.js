@@ -40,7 +40,7 @@ document.addEventListener('keydown', (e) => {
       game.start();
     } else {
       clearInterval(game_interval)
-      game.active = false;
+      game.active = true;
     }
   }
 });
