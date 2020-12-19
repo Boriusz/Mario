@@ -37,6 +37,7 @@ class Game {
   };
 
   fall = (matrix) => {
+    console.log(pill)
     let y = pill.findPill(1).row;
     let x = pill.findPill(1).id;
     let rotation = pill.findPill(1).rotation;
