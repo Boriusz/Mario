@@ -15,6 +15,17 @@ class Pill {
       {id: this.pill_id, color: this.color2, state: this.state, rotation: this.rotation + 2}]
 
   };
+
+  findPill = (rot) => {
+    for (let realm of board.matrix) {
+      let returner = realm.findIndex(el => el.state === 1 && (el.rotation === rot || el.rotation === rot - 1));
+      if (returner !== -1) return {
+        row: board.matrix.findIndex(el => el === realm),
+        id: returner, rotation: realm[returner].rotation
+      };
+    }
+  };
+
 }
 
 const create_pill = () => {
