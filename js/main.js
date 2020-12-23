@@ -1,6 +1,5 @@
 'use strict';
 const bottle = document.querySelector('#bottle');
-const start = document.querySelector('#start');
 let game_interval;
 const item_dom = document.createElement('div');
 item_dom.classList.add('item');
@@ -28,6 +27,7 @@ document.addEventListener('keydown', (e) => {
   else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') game.move_right(board.matrix);
   else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') game.rotate(false, board.matrix);
   else if (e.key === 'Shift') game.rotate(true, board.matrix);
+  else if (e.code === 'ArrowDown') game.fall(board.matrix);
   else if (e.code === 'Space') {
     if (!game.active) {
       clearInterval(game_interval)

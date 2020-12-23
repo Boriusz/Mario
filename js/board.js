@@ -22,6 +22,13 @@ class Board {
     matrix[6][4] = piece[1];
     return matrix
   };
+
+  append_virus = (viruses, matrix) => {
+    viruses.forEach(virus => {
+      matrix[virus.y][virus.x] = virus;
+    })
+    return matrix
+  }
 }
 
 const board = new Board(8, 16);

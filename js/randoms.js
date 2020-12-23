@@ -1,7 +1,9 @@
 'use strict';
 const random_color = () => {
+  // return 'bl'
   return colors[Math.floor(Math.random() * colors.length)]
 };
-const random_0_1 = () => {
-  return Math.round(Math.random())
+const randomize = (min, max) => {
+  return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
