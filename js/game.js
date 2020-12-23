@@ -13,7 +13,6 @@ class Game {
   }
 
   start() {
-    // create_pill(); tutaj tworzymy ta co mario trzyma i state 0
     this.draw(board.matrix);
     game_interval = setInterval(() => {
       this.fall(board.matrix);
@@ -68,7 +67,7 @@ class Game {
             let sibling = flat.find(el => el.id === save_id)
             if (sibling) board.matrix[sibling.coords.y][sibling.coords.x].rotation = 5
           } else {
-            // player.score here
+            // player.score
             board.matrix[item[0]][item[1]].rotation = 'x'
             board.matrix[item[0]][item[1]].kek = 'x'
           }
@@ -152,6 +151,7 @@ class Game {
       matrix[pill.y][pill.x].state = 0;
       matrix[pill.y2][pill.x2].state = 0;
       clearInterval(game_interval);
+      create_pill();
       board.matrix = board.append_piece(pill.return_piece(), board.matrix);
       game.start();
     } else {
