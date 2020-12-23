@@ -17,17 +17,12 @@ board.matrix.forEach(column => {
 const items = document.querySelectorAll('.item');
 let pill;
 const colors = [
-  '#808080',
-  '#FFFF00',
-  '#0000FF'
+  'br',
+  'yl',
+  'bl'
 ];
 const game = new Game();
 game.init();
-start.addEventListener('click', () => {
-  clearInterval(game_interval)
-  game.active = true;
-  game.start();
-});
 document.addEventListener('keydown', (e) => {
   if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') game.move_left(board.matrix);
   else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') game.move_right(board.matrix);

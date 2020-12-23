@@ -9,8 +9,8 @@ class Pill {
     this.rotation = rotation;
     this.rotation2 = this.rotation + 2
     this.state = state;
-    this.y = 1;
-    this.y2 = 1;
+    this.y = 6;
+    this.y2 = 6;
     this.x = 3;
     this.x2 = 4;
   }

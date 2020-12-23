@@ -2,22 +2,24 @@
 
 class Board {
   constructor(w, h) {
-    this.width = w;
-    this.height = h + 1;
+    this.width = w + 7;
+    this.height = h + 6;
     this.matrix = this.create_matrix()
   }
 
   create_matrix = () => {
     const matrix = [];
     while (this.height--) {
-      matrix.push(new Array(this.width).fill(0));
+      if (this.height <= 13) matrix.push(new Array(8).fill(0));
+      else matrix.push(new Array(this.width).fill(0));
+
     }
     return matrix;
   };
 
   append_piece = (piece, matrix) => {
-    matrix[1][3] = piece[0];
-    matrix[1][4] = piece[1];
+    matrix[6][3] = piece[0];
+    matrix[6][4] = piece[1];
     return matrix
   };
 }

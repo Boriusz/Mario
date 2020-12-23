@@ -1,37 +1,48 @@
+:root {
+  --multiplier: 1.5;
+}
+
 body {
-  background: black;
-  color: #fff;
   font-family: sans-serif;
   font-size: 2em;
   text-align: center;
+  margin: 0;
+  padding: 0;
+}
+
+#container {
+  z-index: 1;
+  display: inline-block;
+  position: relative;
+  min-height: calc(384px * 1.5);
+  min-width: calc(640px * 1.5);
+  background: url(../img/pf.png) no-repeat center center fixed;
+  background-size: calc(640px * var(--multiplier)) calc(384px * var(--multiplier));
+  top: calc(50% - (calc(384px * var(--multiplier)) / 2));
 }
 
 #bottle {
-  background: white;
+  z-index: 0;
   position: absolute;
-  width: 240px;
-  height: 480px;
+  width: 360px;
   margin: 0;
   padding: 0;
-  left: calc(50% - (240px / 2));
-  top: calc(90% - 480px);
+  left: 408px;
+  top: 0;
 }
 
 .row {
   width: 100%;
-  height: calc(480px / 16)
+  height: 24px;
 }
 
-.row:nth-child(1) > .item {
-  background: black;
-  display: inline-block;
-  width: 30px;
-  height: 30px;
+.row:nth-child(n+9) {
+  width: 192px;
 }
 
 .item {
   display: inline-block;
-  width: 30px;
-  height: 30px;
-  background: white;
+  box-shadow: inset 0 0 0 1px #f00;
+  width: 24px;
+  height: 24px;
 }

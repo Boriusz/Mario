@@ -22,16 +22,21 @@ class Game {
     board.matrix = matrix;
     matrix.forEach((row, row_index) => {
       row.forEach((item, item_index) => {
-        let actual = items[(row_index) * 8 + item_index];
-        if (item !== 0) {
-          actual.style.background = item.color;
-          actual.setAttribute('rotation', item.rotation);
-          actual.setAttribute('state', item.state);
-        } else {
-          actual.removeAttribute('style');
-          actual.removeAttribute('rotation');
-          actual.removeAttribute('state');
+        let actual;
+        if (row_index > 8) actual = items[((row_index) * 8 + item_index) + 56];
+        else actual = items[((row_index) * 15 + item_index)];
+        if (actual) {
+          if (item !== 0) {
+            actual.style.backgroundImage = `url(./img/${item.color}_${item.rotation}.png)`;
+            actual.style.backgroundRepeat = `no-repeat`;
+            actual.style.backgroundSize = `100% 100%`;
+            actual.setAttribute('state', item.state);
+          } else {
+            actual.removeAttribute('style');
+            actual.removeAttribute('state');
+          }
         }
+
       })
     })
   };
@@ -59,7 +64,7 @@ class Game {
 
   rotate = (direction, matrix) => { //false UP/lewo true Shift/prawo
     if (game.active) {
-      if (pill.rotation === 1 && matrix[pill.y - 1][pill.x] === 0) {
+      if (pill.rotation === 1 && matrix[pill.y - 1][pill.x] === 0 && (pill.x === 3 || pill.x === 4 ? pill.y > 5 : pill.y > 6)) {
         pill.rotation_update(0, 2)
         pill.y2--
         pill.x2--
@@ -68,7 +73,7 @@ class Game {
         matrix[pill.y2][pill.x2] = pill.return_piece()[1]
         matrix[pill.y][pill.x + 1] = 0;
         game.draw(matrix);
-      } else if (pill.rotation === 0 && matrix[pill.y][pill.x + 1] === 0) {
+      } else if (pill.rotation === 0 && matrix[pill.y][pill.x + 1] === 0 && pill.x < 7) {
         pill.rotation_update(1, 3);
         pill.y2 = pill.y
         pill.x2 = pill.x + 1
@@ -78,7 +83,7 @@ class Game {
         matrix[pill.y - 1][pill.x] = 0;
         game.draw(matrix);
       } else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 &&
-        !matrix[pill.y][pill.x + 1]) {
+        (!matrix[pill.y][pill.x + 1] || pill.x === 7)) {
         pill.rotation_update(1, 3)
         matrix[pill.y2][pill.x2] = 0;
         pill.y2++
@@ -108,13 +113,13 @@ class Game {
   move_left = (matrix) => {
     if (game.active) {
       if (pill.rotation === 1 && matrix[pill.y][pill.x - 1] === 0) this.move(matrix, -1, false)
-      else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 && matrix[pill.y2][pill.x2 - 1] === 0) this.move(matrix, -1, true)
+      else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 && matrix[pill.y2][pill.x2 - 1] === 0 && (pill.y === 6 ? pill.x === 4 : true)) this.move(matrix, -1, true)
     }
   };
   move_right = (matrix) => {
     if (game.active) {
-      if (pill.rotation === 1 && matrix[pill.y2][pill.x2 + 1] === 0 && matrix[pill.y2][pill.x2 + 1] === 0) this.move(matrix, 1, false)
-      else if (matrix[pill.y][pill.x + 1] === 0 && matrix[pill.y - 1][pill.x + 1] === 0) this.move(matrix, 1, true)
+      if (pill.rotation === 1 && matrix[pill.y2][pill.x2 + 1] === 0 && matrix[pill.y2][pill.x2 + 1] === 0 && pill.x2 < 7) this.move(matrix, 1, false)
+      else if (matrix[pill.y][pill.x + 1] === 0 && matrix[pill.y - 1][pill.x + 1] === 0 && pill.x2 < 7 && (pill.y === 6 ? pill.x === 3 : true)) this.move(matrix, 1, true)
     }
   };
 }
