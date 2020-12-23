@@ -13,6 +13,7 @@ class Game {
   }
 
   start() {
+    // create_pill(); tutaj tworzymy ta co mario trzyma i state 0
     this.draw(board.matrix);
     game_interval = setInterval(() => {
       this.fall(board.matrix);
@@ -27,7 +28,7 @@ class Game {
         if (row_index > 8) actual = items[((row_index) * 8 + item_index) + 56];
         else actual = items[((row_index) * 15 + item_index)];
         if (actual) {
-          if (item !== 0 && Object.keys(item).length === 5) {
+          if (item !== 0 && Object.keys(item).length !== 3) {
             actual.style.backgroundImage = `url(./img/${item.color}_${item.rotation}.png)`;
             actual.style.backgroundRepeat = `no-repeat`;
             actual.style.backgroundSize = `100% 100%`;
@@ -53,21 +54,38 @@ class Game {
     else if (rotation === 0) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0
   };
 
-  boom = (items, items2) => {
-    items.forEach(item => {
-      let save = board.matrix[item[0]][item[1]]
-      board.matrix[item[0]][item[1]] = 0;
-      if (save.id) {
-        let flat = board.matrix.flat();
-        let sibling = flat.find(el => el.id === save.id)
-        if (sibling) board.matrix[sibling.coords.y][sibling.coords.x].rotation = 5
-
+  boom = function (items, items2) {
+    console.log(items)
+    Array.prototype.slice.call(arguments).forEach(arg => {
+      if (arg) {
+        arg.forEach(item => {
+          console.log(item)
+          let save_id = board.matrix[item[0]][item[1]].id
+          if (save_id) {
+            board.matrix[item[0]][item[1]].rotation = 'o'
+            board.matrix[item[0]][item[1]].id += 500
+            let flat = board.matrix.flat();
+            let sibling = flat.find(el => el.id === save_id)
+            if (sibling) board.matrix[sibling.coords.y][sibling.coords.x].rotation = 5
+          } else {
+            // player.score here
+            board.matrix[item[0]][item[1]].rotation = 'x'
+            board.matrix[item[0]][item[1]].kek = 'x'
+          }
+        })
       }
     })
-    if (items2) items2.forEach(item => {
-      board.matrix[item[0]][item[1]] = 0
-    })
-    this.draw(board.matrix)
+    game.draw(board.matrix)
+    setTimeout(() => {
+      Array.prototype.slice.call(arguments).forEach(arg => {
+        if (arg) {
+          arg.forEach(item => {
+            board.matrix[item[0]][item[1]] = 0
+          })
+        }
+      })
+      game.draw(board.matrix)
+    }, 200)
   };
 
   destroy = (matrix) => {
@@ -108,7 +126,7 @@ class Game {
       else if (counter1y >= 4) this.boom(tab1y, null)
       else if (counter1x >= 4) this.boom(tab1x, null)
     }
-    if (second_flag.length) { //  && second_color !== first_color
+    if (second_flag.length) {
       second_flag.forEach(direction => {
         let x = 1
         if (matrix[pill.y2 + direction[0] * x]) {
@@ -126,16 +144,14 @@ class Game {
       else if (counter2y >= 4) this.boom(tab2y, null)
       else if (counter2x >= 4) this.boom(tab2x, null)
     }
-
-
   };
 
   fall = (matrix) => {
     if (this.collide(board.matrix, pill.rotation)) {
       this.destroy(board.matrix);
-      pill.state = 0;
+      matrix[pill.y][pill.x].state = 0;
+      matrix[pill.y2][pill.x2].state = 0;
       clearInterval(game_interval);
-      create_pill();
       board.matrix = board.append_piece(pill.return_piece(), board.matrix);
       game.start();
     } else {
