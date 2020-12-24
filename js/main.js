@@ -1,8 +1,15 @@
 'use strict';
+
 const bottle = document.querySelector('#bottle');
-let game_interval;
 const item_dom = document.createElement('div');
 item_dom.classList.add('item');
+const colors = [
+  'br',
+  'yl',
+  'bl'
+];
+let pill;
+let game_interval;
 board.matrix.forEach(column => {
   let element = document.createElement('div');
   element.classList.add('row');
@@ -13,15 +20,6 @@ board.matrix.forEach(column => {
     element.appendChild(element2);
   })
 });
-const items = document.querySelectorAll('.item');
-let pill;
-const colors = [
-  'br',
-  'yl',
-  'bl'
-];
-const game = new Game();
-game.init();
 document.addEventListener('keydown', (e) => {
   if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') game.move_left(board.matrix);
   else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') game.move_right(board.matrix);
@@ -39,6 +37,10 @@ document.addEventListener('keydown', (e) => {
     }
   }
 });
+const items = document.querySelectorAll('.item');
+const game = new Game();
+game.init();
+
 
 
 
