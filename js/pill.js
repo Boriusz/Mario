@@ -9,10 +9,10 @@ class Pill {
     this.rotation = rotation;
     this.rotation2 = this.rotation + 2
     this.state = state;
-    this.y = 6;
-    this.y2 = 6;
-    this.x = 3;
-    this.x2 = 4;
+    this.y = 3;
+    this.y2 = 3;
+    this.x = 13;
+    this.x2 = 14;
   }
 
   rotation_update = (arg, arg2) => {
@@ -44,6 +44,10 @@ class Pill {
 }
 
 const create_pill = () => {
+  pill = pill_in_hand
+};
+const create_pill_in_hand = () => {
   pill_counter++;
-  pill = new Pill(pill_counter, random_color(), random_color(), 1, 1);
+  pill_in_hand = new Pill(pill_counter, random_color(), random_color(), 1, 1);
+  board.matrix = board.append_piece_to_hand(pill_in_hand.return_piece(), board.matrix);
 };

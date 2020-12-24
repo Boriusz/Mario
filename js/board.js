@@ -17,9 +17,9 @@ class Board {
     return matrix;
   };
 
-  append_piece = (piece, matrix) => {
-    matrix[6][3] = piece[0];
-    matrix[6][4] = piece[1];
+  append_piece_to_hand = (piece, matrix) => {
+    matrix[3][13] = piece[0];
+    matrix[3][14] = piece[1];
     return matrix
   };
 
