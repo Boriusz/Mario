@@ -33,7 +33,7 @@ function add_listeners() {
       if (!game.active) {
         clearInterval(game_interval)
         game.active = true;
-        game.start();
+        mario.throw(board.matrix)
       } else {
         clearInterval(game_interval)
         game.active = true;
@@ -46,6 +46,7 @@ add_listeners()
 const items = document.querySelectorAll('.item');
 const game = new Game();
 const mario = new Mario();
+const player = new Player();
 game.init();
 game.draw(board.matrix);
 

@@ -9,15 +9,9 @@ class Game {
   init() {
     create_pill_in_hand();
     create_viruses(4);
+    player.viruses = 4;
     board.matrix = board.append_virus(viruses, board.matrix);
   }
-
-  start() {
-    clearInterval(game_interval);
-    mario.throw(board.matrix)
-    document.onkeydown = null;
-
-  };
 
   draw = (matrix) => {
     board.matrix = matrix;
@@ -56,12 +50,17 @@ class Game {
 
   fall = (matrix) => {
     if (this.collide(board.matrix, pill.rotation)) {
-      this.destroy(board.matrix);
       matrix[pill.y][pill.x].state = 0;
       matrix[pill.y2][pill.x2].state = 0;
       game.flag = false
       document.onkeydown = null;
-      game.start();
+      clearInterval(game_interval)
+      this.destroy(board.matrix);
+      if (player.viruses === 0) this.end(true)
+      else setTimeout(() => {
+        mario.throw(board.matrix)
+      }, 220)
+
     } else {
       pill.y++;
       pill.y2++;
@@ -155,7 +154,8 @@ class Game {
             let sibling = flat.find(el => el.id === save_id)
             if (sibling) board.matrix[sibling.coords.y][sibling.coords.x].rotation = 5
           } else {
-            // player.score
+            player.update_score(100)
+            player.destroy_virus()
             board.matrix[item[0]][item[1]].rotation = 'x'
             board.matrix[item[0]][item[1]].kek = 'x'
           }
@@ -171,7 +171,6 @@ class Game {
           })
         }
       })
-      game.draw(board.matrix)
     }, 200)
   };
 
@@ -232,4 +231,12 @@ class Game {
       else if (counter2x >= 4) this.boom(tab2x, null)
     }
   };
+
+  end = (flag) => {
+    if (flag) {
+      console.log('won')
+    } else {
+      console.log('lost')
+    }
+  }
 }

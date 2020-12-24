@@ -4,8 +4,7 @@ class Mario {
   constructor() {
   }
 
-  throw = (matrix) => {
-    console.log('throwing')
+  throw = () => {
     pill = pill_in_hand;
     const animations = [
       function () {
@@ -84,17 +83,17 @@ class Mario {
         }, 500)
       },
     ]
-    const timer = ms => new Promise(res => setTimeout(res, ms))
+    const timer = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-    async function perform_animation() { // We need to wrap the loop into an async function for this to work
+    async function perform_animation() {
       for (let i = 0; i <= animations.length; i++) {
         if (i === animations.length) {
           game.flag = true
           add_listeners()
         } else {
           animations[i]()
-          await timer(20);
-        } // then the created Promise can be awaited
+          await timer(15);
+        }
       }
     }
 
