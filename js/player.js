@@ -11,6 +11,5 @@ class Player {
   }
   destroy_virus = () => {
     this.viruses--
-
   }
 }

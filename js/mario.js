@@ -59,7 +59,7 @@ class Mario {
       },
       function () {
         game.move_left(board.matrix)
-        game.fall(board.matrix)
+        game.fall(board.matrix, pill)
         game.rotate(false, board.matrix)
       },
       function () {
@@ -70,16 +70,16 @@ class Mario {
         game.rotate(false, board.matrix)
       },
       function () {
-        game.fall(board.matrix)
+        game.fall(board.matrix, pill)
       }, function () {
-        game.fall(board.matrix)
+        game.fall(board.matrix, pill)
       }, function () {
         create_pill_in_hand();
-        game.fall(board.matrix)
+        game.fall(board.matrix, pill)
       }, function () {
-        game.fall(board.matrix)
+        game.fall(board.matrix, pill)
         game_interval = setInterval(() => {
-          game.fall(board.matrix);
+          game.fall(board.matrix, pill);
         }, 500)
       },
     ]

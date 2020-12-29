@@ -28,7 +28,7 @@ function add_listeners() {
     else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') game.move_right(board.matrix);
     else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') game.rotate(false, board.matrix);
     else if (e.key === 'Shift') game.rotate(true, board.matrix);
-    else if (e.code === 'ArrowDown') game.fall(board.matrix);
+    else if (e.code === 'ArrowDown') game.fall(board.matrix, pill, true);
     else if (e.code === 'Space') {
       if (!game.active) {
         clearInterval(game_interval)

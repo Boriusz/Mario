@@ -48,7 +48,7 @@ class Game {
   };
 
 
-  fall = (matrix) => {
+  fall = (matrix, pill, flag = false) => {
     if (this.collide(board.matrix, pill.rotation)) {
       matrix[pill.y][pill.x].state = 0;
       matrix[pill.y2][pill.x2].state = 0;
@@ -56,12 +56,16 @@ class Game {
       document.onkeydown = null;
       clearInterval(game_interval)
       this.destroy(board.matrix);
-      if (player.viruses === 0) this.end(true)
-      else setTimeout(() => {
-        mario.throw(board.matrix)
-      }, 220)
-
+      if (pill.y === 6 && pill.y2 === 6) {
+        this.end(false)
+      } else {
+        // if (player.viruses === 0) this.end(true) /// else
+        setTimeout(() => {
+          mario.throw(board.matrix)
+        }, 220)
+      }
     } else {
+      flag ? clearInterval(game_interval) : null;
       pill.y++;
       pill.y2++;
       matrix[pill.y][pill.x] = pill.return_piece()[0]
@@ -69,6 +73,21 @@ class Game {
       pill.rotation === 1 ? matrix[pill.y - 1][pill.x] = 0 : null // Dla poziomego usuwa także tego u góry drugiego
       matrix[pill.y2 - 1][pill.x2] = 0
       this.draw(matrix);
+      flag ? this.fall(matrix, pill, true) : null
+    }
+  };
+  drop = (matrix, piller) => {
+    if ((matrix[piller.coords.y + 1] && matrix[piller.coords.y + 1][piller.coords.x] === 0)) {
+      matrix[piller.coords.y + 1][piller.coords.x] = matrix[piller.coords.y][piller.coords.x]
+      matrix[piller.coords.y][piller.coords.x] = 0
+      piller.coords.y++
+      this.draw(matrix);
+      game.drop(matrix, piller)
+    } else {
+      game.flag = false
+      document.onkeydown = null;
+      clearInterval(game_interval)
+      this.destroy2(matrix, piller);
     }
   };
 
@@ -143,6 +162,7 @@ class Game {
   }
 
   boom = function (items, items2) {
+    let siblings = []
     Array.prototype.slice.call(arguments).forEach(arg => {
       if (arg) {
         arg.forEach(item => {
@@ -152,7 +172,20 @@ class Game {
             board.matrix[item[0]][item[1]].id += 500
             let flat = board.matrix.flat();
             let sibling = flat.find(el => el.id === save_id)
-            if (sibling) board.matrix[sibling.coords.y][sibling.coords.x].rotation = 5
+            if (sibling) {
+              let flag = true
+              Array.prototype.slice.call(arguments).forEach(arg => {
+                if (arg) {
+                  if (arg.find(el => el[0] === sibling.coords.y && el[1] === sibling.coords.x)) {
+                    flag = false
+                  }
+                }
+              })
+              if (flag) {
+                siblings.push(sibling)
+                board.matrix[sibling.coords.y][sibling.coords.x].rotation = 5
+              }
+            }
           } else {
             player.update_score(100)
             player.destroy_virus()
@@ -172,6 +205,10 @@ class Game {
         }
       })
     }, 200)
+    siblings.reverse().forEach(item => {
+      game.drop(board.matrix, item)
+    })
+    // if (player.viruses === 0) game.end(true)
   };
 
   destroy = (matrix) => {
@@ -229,6 +266,39 @@ class Game {
       if (counter2y >= 4 && counter2x >= 4) this.boom(tab2y, tab2x)
       else if (counter2y >= 4) this.boom(tab2y, null)
       else if (counter2x >= 4) this.boom(tab2x, null)
+    }
+  };
+  destroy2 = (matrix, pill) => {
+    console.log(pill)
+    const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
+    const color = pill.color
+    let first_flag = []
+    possibilities.forEach(p => {
+      if (matrix[pill.coords.y + p[0]]) {
+        if ((matrix[pill.coords.y + p[0]][pill.coords.x + p[1]]) && (matrix[pill.coords.y + p[0]][pill.coords.x + p[1]].color === color)) first_flag.push(p)
+      }
+    })
+    let counter1y = 1;
+    let counter1x = 1;
+    let tab1y = [[pill.y, pill.x]]
+    let tab1x = [[pill.y, pill.x]]
+    if (first_flag.length) {
+      first_flag.forEach(direction => {
+        let x = 1
+        if (matrix[pill.coords.y + direction[0] * x]) {
+          while (matrix[pill.coords.y + (direction[0] * x)][pill.x + (direction[1] * x)]?.color === color) {
+            direction[0] !== 0 ? counter1y++ : counter1x++
+            direction[0] !== 0 ? tab1y.push([pill.coords.y + (direction[0] * x), pill.x + (direction[1] * x)]) : tab1x.push([pill.coords.y + (direction[0] * x), pill.coords.x + (direction[1] * x)])
+            x++
+            if (!matrix[pill.coords.y + direction[0] * x]) {
+              break
+            }
+          }
+        }
+      })
+      if (counter1y >= 4 && counter1x >= 4) this.boom(tab1y, tab1x)
+      else if (counter1y >= 4) this.boom(tab1y, null)
+      else if (counter1x >= 4) this.boom(tab1x, null)
     }
   };
 
