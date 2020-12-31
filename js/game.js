@@ -8,9 +8,10 @@ class Game {
 
   init() {
     create_pill_in_hand();
-    create_viruses(4);
+    ``
+    Virus.create_viruses(4);
     player.viruses = 4;
-    board.matrix = board.append_virus(viruses, board.matrix);
+    board.matrix = board.append_virus(Virus.viruses, board.matrix);
   }
 
   draw = (matrix) => {
@@ -41,27 +42,28 @@ class Game {
       })
     })
   };
-  collide = (matrix, rotation) => {
-    if (rotation === 1) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0 ||
+
+  collide = (matrix, pill) => {
+    if (pill.rotation === 1) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0 ||
       matrix[pill.y2 + 1][pill.x2] !== 0;
-    else if (rotation === 0) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0
+    else if (pill.rotation === 0) return !matrix[pill.y + 1] || matrix[pill.y + 1][pill.x] !== 0
   };
 
 
   fall = (matrix, pill, flag = false) => {
-    if (this.collide(board.matrix, pill.rotation)) {
+    if (this.collide(matrix, pill)) {
       matrix[pill.y][pill.x].state = 0;
       matrix[pill.y2][pill.x2].state = 0;
       game.flag = false
       document.onkeydown = null;
       clearInterval(game_interval)
-      this.destroy(board.matrix);
+      this.destroy(matrix, pill);
       if (pill.y === 6 && pill.y2 === 6) {
         this.end(false)
       } else {
         // if (player.viruses === 0) this.end(true) /// else
         setTimeout(() => {
-          mario.throw(board.matrix)
+          mario.throw(Pill.pills[Pill.pills.length - 1])
         }, 220)
       }
     } else {
@@ -76,22 +78,24 @@ class Game {
       flag ? this.fall(matrix, pill, true) : null
     }
   };
-  drop = (matrix, piller) => {
-    if ((matrix[piller.coords.y + 1] && matrix[piller.coords.y + 1][piller.coords.x] === 0)) {
-      matrix[piller.coords.y + 1][piller.coords.x] = matrix[piller.coords.y][piller.coords.x]
-      matrix[piller.coords.y][piller.coords.x] = 0
-      piller.coords.y++
+
+
+  drop = (matrix, pill) => {
+    if ((matrix[pill.coords.y + 1] && matrix[pill.coords.y + 1][pill.coords.x] === 0)) {
+      matrix[pill.coords.y + 1][pill.coords.x] = matrix[pill.coords.y][pill.coords.x]
+      matrix[pill.coords.y][pill.coords.x] = 0
+      pill.coords.y++
       this.draw(matrix);
-      game.drop(matrix, piller)
+      game.drop(matrix, pill)
     } else {
       game.flag = false
       document.onkeydown = null;
       clearInterval(game_interval)
-      this.destroy2(matrix, piller);
+      this.destroy2(matrix, pill);
     }
   };
 
-  rotate = (direction, matrix) => { //false UP/lewo true Shift/prawo
+  rotate = (direction, matrix, pill) => { //false UP/lewo true Shift/prawo
     if (game.active) {
       if (pill.rotation === 1 && matrix[pill.y - 1][pill.x] === 0 && (game.flag ? (pill.x === 3 || pill.x === 4 ? pill.y > 5 : pill.y > 6) : true)) {
         pill.rotation_update(0, 2)
@@ -125,7 +129,7 @@ class Game {
     }
   };
 
-  move = (matrix, where, rotation) => {
+  move = (matrix, where, rotation, pill) => {
     pill.x += where
     pill.x2 += where
     matrix[pill.y][pill.x] = pill.return_piece()[0]
@@ -139,20 +143,20 @@ class Game {
     }
     game.draw(matrix);
   }
-  move_left = (matrix) => {
+  move_left = (matrix, pill) => {
     if (game.active) {
-      if (pill.rotation === 1 && matrix[pill.y][pill.x - 1] === 0) this.move(matrix, -1, false)
-      else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 && matrix[pill.y2][pill.x2 - 1] === 0 && (pill.y === 6 ? pill.x === 4 : true)) this.move(matrix, -1, true)
+      if (pill.rotation === 1 && matrix[pill.y][pill.x - 1] === 0) this.move(matrix, -1, false, pill)
+      else if (pill.rotation === 0 && matrix[pill.y][pill.x - 1] === 0 && matrix[pill.y2][pill.x2 - 1] === 0 && (pill.y === 6 ? pill.x === 4 : true)) this.move(matrix, -1, true, pill)
     }
   };
-  move_right = (matrix) => {
+  move_right = (matrix, pill) => {
     if (game.active) {
-      if (pill.rotation === 1 && matrix[pill.y2][pill.x2 + 1] === 0 && matrix[pill.y2][pill.x2 + 1] === 0 && pill.x2 < 7) this.move(matrix, 1, false)
-      else if (matrix[pill.y][pill.x + 1] === 0 && matrix[pill.y - 1][pill.x + 1] === 0 && pill.x2 < 7 && (pill.y === 6 ? pill.x === 3 : true)) this.move(matrix, 1, true)
+      if (pill.rotation === 1 && matrix[pill.y2][pill.x2 + 1] === 0 && matrix[pill.y2][pill.x2 + 1] === 0 && pill.x2 < 7) this.move(matrix, 1, false, pill)
+      else if (matrix[pill.y][pill.x + 1] === 0 && matrix[pill.y - 1][pill.x + 1] === 0 && pill.x2 < 7 && (pill.y === 6 ? pill.x === 3 : true)) this.move(matrix, 1, true, pill)
     }
   };
 
-  move_up = (matrix) => {
+  move_up = (matrix, pill) => {
     pill.y--
     pill.y2--
     matrix[pill.y][pill.x] = pill.return_piece()[0]
@@ -166,13 +170,14 @@ class Game {
     Array.prototype.slice.call(arguments).forEach(arg => {
       if (arg) {
         arg.forEach(item => {
-          let save_id = board.matrix[item[0]][item[1]].id
-          if (save_id) {
+          let pill = Pill.pills.find(el => el.id === board.matrix[item[0]][item[1]].id)
+          if (pill) {
             board.matrix[item[0]][item[1]].rotation = 'o'
-            board.matrix[item[0]][item[1]].id += 500
+            board.matrix[item[0]][item[1]].id += 100
             let flat = board.matrix.flat();
-            let sibling = flat.find(el => el.id === save_id)
+            let sibling = flat.find(el => el.id === pill.id)
             if (sibling) {
+              console.log(sibling)
               let flag = true
               Array.prototype.slice.call(arguments).forEach(arg => {
                 if (arg) {
@@ -208,10 +213,11 @@ class Game {
     siblings.reverse().forEach(item => {
       game.drop(board.matrix, item)
     })
-    // if (player.viruses === 0) game.end(true)
+    if (player.viruses === 0) game.end(true)
   };
 
-  destroy = (matrix) => {
+
+  destroy = (matrix, pill) => {
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
     const first_color = pill.color
     const second_color = pill.color2
@@ -269,7 +275,6 @@ class Game {
     }
   };
   destroy2 = (matrix, pill) => {
-    console.log(pill)
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
     const color = pill.color
     let first_flag = []

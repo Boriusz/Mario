@@ -8,8 +8,6 @@ const colors = [
   'yl',
   'bl'
 ];
-let pill;
-let pill_in_hand;
 let game_interval;
 board.matrix.forEach(column => {
   let element = document.createElement('div');
@@ -24,16 +22,16 @@ board.matrix.forEach(column => {
 
 function add_listeners() {
   document.onkeydown = (e) => {
-    if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') game.move_left(board.matrix);
-    else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') game.move_right(board.matrix);
-    else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') game.rotate(false, board.matrix);
-    else if (e.key === 'Shift') game.rotate(true, board.matrix);
-    else if (e.code === 'ArrowDown') game.fall(board.matrix, pill, true);
+    if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') game.move_left(board.matrix, Pill.pills[Pill.pills.length - 2]);
+    else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') game.move_right(board.matrix, Pill.pills[Pill.pills.length - 2]);
+    else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') game.rotate(false, board.matrix, Pill.pills[Pill.pills.length - 2]);
+    else if (e.key === 'Shift') game.rotate(true, board.matrix, Pill.pills[Pill.pills.length - 2]);
+    else if (e.code === 'ArrowDown') game.fall(board.matrix, Pill.pills[Pill.pills.length - 2], true);
     else if (e.code === 'Space') {
       if (!game.active) {
         clearInterval(game_interval)
         game.active = true;
-        mario.throw(board.matrix)
+        mario.throw(Pill.pills[Pill.pills.length - 1])
       } else {
         clearInterval(game_interval)
         game.active = true;

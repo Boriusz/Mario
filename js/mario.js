@@ -4,70 +4,69 @@ class Mario {
   constructor() {
   }
 
-  throw = () => {
-    pill = pill_in_hand;
+  throw = (pill) => {
     const animations = [
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.move_up(board.matrix)
-        game.rotate(false, board.matrix)
+        game.move_up(board.matrix, pill)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.move_up(board.matrix)
-        game.rotate(false, board.matrix)
+        game.move_up(board.matrix, pill)
+        game.rotate(false, board.matrix, pill)
       }, //reka w dol
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       }, // reka w dol
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       }, function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       }, function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       }, function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       }, function () {
-        game.move_left(board.matrix)
-        game.rotate(false, board.matrix)
+        game.move_left(board.matrix, pill)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.move_left(board.matrix)
+        game.move_left(board.matrix, pill)
         game.fall(board.matrix, pill)
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.rotate(false, board.matrix)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
-        game.move_left(board.matrix)
-        game.rotate(false, board.matrix)
+        game.move_left(board.matrix, pill)
+        game.rotate(false, board.matrix, pill)
       },
       function () {
         game.fall(board.matrix, pill)
