@@ -44,9 +44,10 @@ add_listeners()
 const items = document.querySelectorAll('.item');
 const game = new Game();
 const mario = new Mario();
+mario.setup()
 const player = new Player();
 game.init();
-game.draw(board.matrix);
+board.draw(board.matrix);
 
 
 

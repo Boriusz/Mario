@@ -46,7 +46,7 @@ class Pill {
 }
 
 const create_pill_in_hand = () => {
-  Pill.pill_counter++;
   Pill.pills.push(new Pill(Pill.pill_counter, random_color(), random_color(), 1, 1))
   board.matrix = board.append_piece_to_hand(Pill.pills[Pill.pills.length - 1].return_piece(), board.matrix);
+  Pill.pill_counter++;
 };
