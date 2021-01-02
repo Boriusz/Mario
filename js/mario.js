@@ -14,19 +14,20 @@ class Mario {
   }
 
   throw = (pill) => {
+    game.active = true
     const animations = [
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.move_up(board.matrix, pill)
-        game.rotate(false, board.matrix, pill)
+        pill.move_up(board.matrix)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.move_up(board.matrix, pill)
+        pill.move_up(board.matrix)
         board.matrix[4][14] = 0
         board.matrix[5][14] = 0
         board.matrix[6][14] = 0
@@ -35,16 +36,16 @@ class Mario {
         board.matrix[5][14] = 'middle_12'
         board.matrix[6][13] = 'middle_21'
         board.matrix[6][14] = 'middle_22'
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
         board.matrix[5][13] = 0
         board.matrix[5][14] = 0
         board.matrix[6][13] = 0
@@ -54,56 +55,57 @@ class Mario {
         board.matrix[7][14] = 'down_2'
       }, // reka w dol
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       }, function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       }, function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       }, function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       }, function () {
-        game.move_left(board.matrix, pill)
-        game.rotate(false, board.matrix, pill)
+        pill.move_left(board.matrix)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.move_left(board.matrix, pill)
-        game.fall(board.matrix, pill)
-        game.rotate(false, board.matrix, pill)
+        pill.move_left(board.matrix)
+        pill.fall(board.matrix)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.rotate(false, board.matrix, pill)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.move_left(board.matrix, pill)
-        game.rotate(false, board.matrix, pill)
+        pill.move_left(board.matrix)
+        pill.rotate(false, board.matrix)
       },
       function () {
-        game.fall(board.matrix, pill)
+        pill.fall(board.matrix)
       }, function () {
-        game.fall(board.matrix, pill)
+        pill.fall(board.matrix)
       }, function () {
-        create_pill_in_hand();
+        Pill.create_pill_in_hand();
         mario.setup()
-        game.fall(board.matrix, pill)
+        pill.fall(board.matrix)
       }, function () {
-        game.fall(board.matrix, pill)
+        pill.fall(board.matrix)
+        game.flag = true
         game_interval = setInterval(() => {
-          game.fall(board.matrix, pill);
+          pill.fall(board.matrix);
         }, 500)
       },
     ]
@@ -112,7 +114,7 @@ class Mario {
     async function perform_animation() {
       for (let i = 0; i <= animations.length; i++) {
         if (i === animations.length) {
-          game.flag = true
+          pill.flag = true
           add_listeners()
         } else {
           animations[i]()
