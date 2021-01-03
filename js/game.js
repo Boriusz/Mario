@@ -13,6 +13,39 @@ class Game {
     board.matrix = board.append_virus(Virus.viruses, board.matrix);
   }
 
+  enable_gravity = async (matrix) => {
+    let fallen = []
+    for (let i = 21; i >= 6; i--) {
+      for (let k = 0; k <= matrix[i].length; k++) {
+        let helper = 0
+        const drop = () => {
+          if ((matrix[i + helper][k]?.id || matrix[i + helper][k]?.id === 0) && matrix[i + helper + 1] && matrix[i + helper + 1][k] === 0
+            && !((matrix[i + helper][k + 1]?.id === matrix[i + helper][k]?.id
+                && matrix[i + helper + 1][k + 1] !== 0)
+              ||
+              (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
+                && matrix[i + helper + 1][k - 1] !== 0)
+            )) {
+            fallen.push(matrix[i + helper][k].id)
+            matrix[i + helper + 1][k] = matrix[i + helper][k]
+            if (matrix[i + helper + 1][k].coords.y < 21 && Pill.pills[matrix[i + helper + 1][k].id].y < 21) {
+              matrix[i + helper + 1][k].coords.y++
+              Pill.pills[matrix[i + helper + 1][k].id].y++
+              Pill.pills[matrix[i + helper + 1][k].id].y2++
+            }
+            matrix[i + helper][k] = 0
+            helper++
+            board.draw(matrix)
+            setTimeout(drop, 20)
+          }
+        }
+        drop()
+      }
+      board.draw(matrix)
+    }
+    return Promise.resolve()
+  }
+
   boom = async function (matrix, items) {
     items.forEach(item => {
       if (matrix[item[0]][item[1]].id || matrix[item[0]][item[1]].id === 0) {
@@ -42,52 +75,17 @@ class Game {
         }, 200)
       })
       await game.enable_gravity(matrix)
-      const reversed = [...Pill.pills]
-      for (const pill of reversed) {
-        console.log(pill)
-        await game.destroy(matrix, pill)
+      let counter = Pill.pills.length - 1
+      for (const pill of Pill.pills) {
+        await game.destroy(board.matrix, pill, counter)
+        counter--
       }
-      return Promise.resolve()
     } catch (err) {
-      console.log(err)
-      return Promise.reject('Unexpected error')
+      return Promise.reject(err)
     }
   };
 
-  enable_gravity = async (matrix) => {
-    let fallen = []
-    for (let i = 21; i >= 6; i--) {
-      for (let k = 0; k <= matrix[i].length; k++) {
-        let helper = 0
-        const drop = () => {
-          if ((matrix[i + helper][k]?.id || matrix[i + helper][k]?.id === 0) && matrix[i + helper + 1] && matrix[i + helper + 1][k] === 0
-            && !((matrix[i + helper][k + 1]?.id === matrix[i + helper][k]?.id
-                && matrix[i + helper + 1][k + 1] !== 0)
-              ||
-              (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
-                && matrix[i + helper + 1][k - 1] !== 0)
-            )) {
-            fallen.push(matrix[i + helper][k].id)
-            matrix[i + helper + 1][k] = matrix[i + helper][k]
-            if (matrix[i + helper + 1][k].coords.y < 21) {
-              matrix[i + helper + 1][k].coords.y++
-              Pill.pills[matrix[i + helper + 1][k].id].y++
-              Pill.pills[matrix[i + helper + 1][k].id].y2++
-            }
-            matrix[i + helper][k] = 0
-            helper++
-            board.draw(matrix)
-            setTimeout(drop, 20)
-          }
-        }
-        drop()
-      }
-      board.draw(matrix)
-    }
-    Promise.resolve()
-  }
-
-  destroy = (matrix, pill) => {
+  destroy = (matrix, pill, counter = 0) => {
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
     const first_color = pill.color
     const second_color = pill.color2
@@ -142,8 +140,8 @@ class Game {
     counter1x >= 4 ? tab1x.forEach(item => final_tab.push(item)) : null
     counter2y >= 4 ? tab2y.forEach(item => final_tab.push(item)) : null
     counter2x >= 4 ? tab2x.forEach(item => final_tab.push(item)) : null
-    if (final_tab.length > 0) return this.boom(matrix, final_tab)
-    else return Promise.resolve()
+    if (final_tab.length > 0) this.boom(matrix, final_tab)
+    else if (counter === 0) return Promise.resolve()
   };
 
   end = (flag) => {
