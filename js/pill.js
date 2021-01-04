@@ -60,13 +60,18 @@ class Pill {
 
   fall = async (matrix, flag = false) => {
     if (this.collide(matrix)) {
+      console.clear()
       matrix[this.y][this.x].state = 0;
       matrix[this.y2][this.x2].state = 0;
       game.flag = false
       document.onkeydown = null;
       clearInterval(game_interval)
       try {
-        await game.destroy(matrix, this);
+        console.table(Pill.pills)
+        await game.destroy(matrix, this)
+        for (const pill of Pill.pills) {
+          await game.destroy(matrix, pill);
+        }
         if (this.y === 6 && this.y2 === 6) game.end(false)
         else if (player.viruses === 0) game.end(true)
         else {

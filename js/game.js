@@ -15,35 +15,39 @@ class Game {
 
   enable_gravity = async (matrix) => {
     let fallen = []
-    for (let i = 21; i >= 6; i--) {
-      for (let k = 0; k <= matrix[i].length; k++) {
-        let helper = 0
-        const drop = () => {
-          if ((matrix[i + helper][k]?.id || matrix[i + helper][k]?.id === 0) && matrix[i + helper + 1] && matrix[i + helper + 1][k] === 0
-            && !((matrix[i + helper][k + 1]?.id === matrix[i + helper][k]?.id
-                && matrix[i + helper + 1][k + 1] !== 0)
-              ||
-              (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
-                && matrix[i + helper + 1][k - 1] !== 0)
-            )) {
-            fallen.push(matrix[i + helper][k].id)
-            matrix[i + helper + 1][k] = matrix[i + helper][k]
-            if (matrix[i + helper + 1][k].coords.y < 21 && Pill.pills[matrix[i + helper + 1][k].id].y < 21) {
-              matrix[i + helper + 1][k].coords.y++
-              Pill.pills[matrix[i + helper + 1][k].id].y++
-              Pill.pills[matrix[i + helper + 1][k].id].y2++
+    const waiter = async () => {
+      for (let i = 21; i >= 6; i--) {
+        for (let k = 0; k <= matrix[i].length; k++) {
+          let helper = 0
+          const drop = () => {
+            if ((matrix[i + helper][k]?.id || matrix[i + helper][k]?.id === 0) && matrix[i + helper + 1] && matrix[i + helper + 1][k] === 0
+              && !((matrix[i + helper][k + 1]?.id === matrix[i + helper][k]?.id
+                  && matrix[i + helper + 1][k + 1] !== 0)
+                ||
+                (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
+                  && matrix[i + helper + 1][k - 1] !== 0)
+              )) {
+              fallen.push(matrix[i + helper][k].id)
+              matrix[i + helper + 1][k] = matrix[i + helper][k]
+              if (matrix[i + helper + 1][k].coords.y < 21 && Pill.pills[matrix[i + helper + 1][k].id].y < 21) {
+                matrix[i + helper + 1][k].coords.y++
+                Pill.pills[matrix[i + helper + 1][k].id].y++
+                Pill.pills[matrix[i + helper + 1][k].id].y2++
+              }
+              matrix[i + helper][k] = 0
+              helper++
+              board.draw(matrix)
+              setTimeout(drop, 20)
             }
-            matrix[i + helper][k] = 0
-            helper++
-            board.draw(matrix)
-            setTimeout(drop, 20)
           }
+          await drop()
         }
-        drop()
+        board.draw(matrix)
+        console.log(i)
+        if (i === 6) return Promise.resolve()
       }
-      board.draw(matrix)
     }
-    return Promise.resolve()
+    return await waiter()
   }
 
   boom = async function (matrix, items) {
@@ -74,18 +78,13 @@ class Game {
           resolve()
         }, 200)
       })
-      await game.enable_gravity(matrix)
-      let counter = Pill.pills.length - 1
-      for (const pill of Pill.pills) {
-        await game.destroy(board.matrix, pill, counter)
-        counter--
-      }
+      return await game.enable_gravity(matrix)
     } catch (err) {
       return Promise.reject(err)
     }
   };
 
-  destroy = (matrix, pill, counter = 0) => {
+  destroy = async (matrix, pill) => {
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
     const first_color = pill.color
     const second_color = pill.color2
@@ -135,13 +134,16 @@ class Game {
         }
       })
     }
+    console.table(pill)
     let final_tab = []
     counter1y >= 4 ? tab1y.forEach(item => final_tab.push(item)) : null
     counter1x >= 4 ? tab1x.forEach(item => final_tab.push(item)) : null
     counter2y >= 4 ? tab2y.forEach(item => final_tab.push(item)) : null
     counter2x >= 4 ? tab2x.forEach(item => final_tab.push(item)) : null
-    if (final_tab.length > 0) this.boom(matrix, final_tab)
-    else if (counter === 0) return Promise.resolve()
+    if (final_tab.length > 0) {
+      console.log('destroying')
+      return await this.boom(matrix, final_tab)
+    } else return Promise.resolve()
   };
 
   end = (flag) => {

@@ -13,10 +13,8 @@ class Mario {
     board.matrix[6][14] = 'up_3'
   }
 
-  throw = async (pill) => {
-    for (const pill of Pill.pills) {
-      await game.destroy(board.matrix, pill)
-    }
+  throw = (pill) => {
+    console.log('throw')
     game.active = true
     const animations = [
       function () {
