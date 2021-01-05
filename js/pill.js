@@ -23,14 +23,14 @@ export default class Pill {
   static pill_counter = 0
   static pills = []
 
-  static create_pill_in_hand = () => {
+  static create_pill_in_hand() {
     Pill.pills.push(new Pill(Pill.pill_counter, Randoms.random_color(), Randoms.random_color(), 1, 1))
     Board.append_piece_to_hand(Pill.pills[Pill.pills.length - 1].pieces)
     Pill.pill_counter++
   }
 
 
-  rotation_update = (arg, arg2) => {
+  rotation_update(arg, arg2) {
     this.rotation = arg
     this.rotation2 = arg2
   }
@@ -136,7 +136,7 @@ export default class Pill {
     }
   }
 
-  move = (matrix, where, rotation) => {
+  move(matrix, where, rotation) {
     this.x += where
     this.x2 += where
     matrix[this.y][this.x] = this.pieces[0]
@@ -150,20 +150,22 @@ export default class Pill {
     }
     Board.draw(matrix)
   }
-  move_left = (matrix) => {
+
+  move_left(matrix) {
     if (Game.active) {
       if (this.rotation === 1 && matrix[this.y][this.x - 1] === 0) this.move(matrix, -1, false, this)
       else if (this.rotation === 0 && matrix[this.y][this.x - 1] === 0 && matrix[this.y2][this.x2 - 1] === 0 && (this.y === 6 ? this.x === 4 : true)) this.move(matrix, -1, true, this)
     }
   }
-  move_right = (matrix) => {
+
+  move_right(matrix) {
     if (Game.active) {
       if (this.rotation === 1 && matrix[this.y2][this.x2 + 1] === 0 && matrix[this.y2][this.x2 + 1] === 0 && this.x2 < 7) this.move(matrix, 1, false, this)
       else if (matrix[this.y][this.x + 1] === 0 && matrix[this.y - 1][this.x + 1] === 0 && this.x2 < 7 && (this.y === 6 ? this.x === 3 : true)) this.move(matrix, 1, true, this)
     }
   }
 
-  move_up = (matrix) => {
+  move_up(matrix) {
     this.y--
     this.y2--
     matrix[this.y][this.x] = this.pieces[0]
