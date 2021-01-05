@@ -1,15 +1,11 @@
-'use strict';
+'use strict'
 
-class Player {
-  constructor() {
-    this.score = 0
-    this.viruses = 0
-  }
+import Virus from './virus.js'
 
-  update_score = (value) => {
-    this.score += value
-  }
-  destroy_virus = () => {
-    this.viruses--
+export default class Player {
+  static score = 0
+
+  static destroy_virus(virus) {
+    Virus.viruses.splice(virus, 1)
   }
 }

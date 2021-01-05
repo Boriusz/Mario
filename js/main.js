@@ -1,53 +1,47 @@
-'use strict';
+'use strict'
 
-const bottle = document.querySelector('#bottle');
-const item_dom = document.createElement('div');
-item_dom.classList.add('item');
-const colors = [
-  'br',
-  'yl',
-  'bl'
-];
-let game_interval;
-board.matrix.forEach(column => {
-  let element = document.createElement('div');
-  element.classList.add('row');
-  bottle.appendChild(element);
+import Game from './game.js'
+import Pill from './pill.js'
+import Board from './board.js'
+import Mario from './mario.js'
+
+const bottle = document.querySelector('#bottle')
+const item_dom = document.createElement('div')
+item_dom.classList.add('item')
+
+Board.matrix.forEach(column => {
+  let element = document.createElement('div')
+  element.classList.add('row')
+  bottle.appendChild(element)
   column.forEach(() => {
-    let element2 = document.createElement('div');
-    element2.classList.add('item');
-    element.appendChild(element2);
+    let element2 = document.createElement('div')
+    element2.classList.add('item')
+    element.appendChild(element2)
   })
-});
+})
 
-function add_listeners() {
-  document.onkeydown = (e) => {
-    if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') Pill.pills[Pill.pills.length - 2].move_left(board.matrix);
-    else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') Pill.pills[Pill.pills.length - 2].move_right(board.matrix);
-    else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') Pill.pills[Pill.pills.length - 2].rotate(false, board.matrix);
-    else if (e.key === 'Shift') Pill.pills[Pill.pills.length - 2].rotate(true, board.matrix);
-    else if (e.code === 'ArrowDown') Pill.pills[Pill.pills.length - 2].fall(board.matrix, true);
-    else if (e.code === 'Space') {
-      if (!game.active) {
-        clearInterval(game_interval)
-        game.active = true;
-        mario.throw(Pill.pills[Pill.pills.length - 1])
-      } else {
-        clearInterval(game_interval)
-        game.active = true;
-      }
+document.onkeydown = (e) => {
+  let item = Pill.pills
+  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') item[item.length - 2]?.move_left(Board.matrix)
+  else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') item[item.length - 2]?.move_right(Board.matrix)
+  else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') item[item.length - 2]?.rotate(false, Board.matrix)
+  else if (e.key === 'Shift') item[item.length - 2]?.rotate(true, Board.matrix)
+  else if (e.code === 'ArrowDown') item[item.length - 2]?.fall(Board.matrix, true)
+  else if (e.code === 'Space') {
+    if (!Game.active) {
+      clearInterval(Game.game_interval)
+      Game.active = true
+      Mario.throw(item[item.length - 1])
+    } else {
+      clearInterval(Game.game_interval)
+      Game.active = true
     }
-  };
+  }
 }
 
-add_listeners()
-const items = document.querySelectorAll('.item');
-const game = new Game();
-const mario = new Mario();
-mario.setup()
-const player = new Player();
-game.init();
-board.draw(board.matrix);
+Mario.setup()
+Game.init()
+Board.draw(Board.matrix)
 
 
 

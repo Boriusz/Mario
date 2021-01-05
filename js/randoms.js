@@ -1,9 +1,18 @@
-'use strict';
-const random_color = () => {
-  // return 'bl'
-  return colors[Math.floor(Math.random() * colors.length)]
-};
-const randomize = (min, max) => {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
+'use strict'
+
+export default class Randoms {
+  static colors = [
+    'br',
+    'yl',
+    'bl'
+  ]
+
+  static random_color() {
+    return this.colors[Math.floor(Math.random() * this.colors.length)]
+  }
+
+  static randomize(max, min) {
+    return Math.floor(Math.random() * (max - min + 1) + min)
+  }
+}
 

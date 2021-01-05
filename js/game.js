@@ -1,19 +1,24 @@
-'use strict';
+'use strict'
 
-class Game {
-  constructor() {
-    this.active = false;
-    this.flag = false
+import Virus from './virus.js'
+import Pill from './pill.js'
+import Board from './board.js'
+import Player from './player.js'
+
+export default class Game {
+
+  static active = false
+  static flag = false
+  static game_interval
+
+  static init() {
+    Pill.create_pill_in_hand()
+    Virus.create_viruses(4)
+    Board.append_virus(Virus.viruses)
   }
 
-  init() {
-    Pill.create_pill_in_hand();
-    Virus.create_viruses(4);
-    player.viruses = 4;
-    board.matrix = board.append_virus(Virus.viruses, board.matrix);
-  }
 
-  enable_gravity = async (matrix) => {
+  static async enable_gravity(matrix) {
     const waiter = async () => {
       for (let i = 21; i >= 6; i--) {
         for (let k = 0; k <= matrix[i].length; k++) {
@@ -33,7 +38,7 @@ class Game {
                 matrix[i + helper + 1][k].coords.y++
                 matrix[i + helper][k] = 0
                 helper++
-                board.draw(matrix)
+                Board.draw(matrix)
                 setTimeout(drop, 20)
               }
 
@@ -41,33 +46,32 @@ class Game {
           }
           await drop()
         }
-        const clone = JSON.parse(JSON.stringify(matrix))
-        console.log(clone)
+        // const clone = JSON.parse(JSON.stringify(matrix))
         if (i === 6) return Promise.resolve()
       }
     }
     return await waiter()
   }
 
-  boom = async function (matrix, items) {
+  static async boom(matrix, items) {
     items.forEach(item => {
       if (matrix[item[0]][item[1]].id || matrix[item[0]][item[1]].id === 0) {
         matrix[item[0]][item[1]].rotation = 'o'
         matrix[item[0]][item[1]].id += 100
-        let flat = matrix.flat();
+        let flat = matrix.flat()
         let sibling = flat.find(el => el.id === matrix[item[0]][item[1]].id - 100)
         if (sibling) {
           matrix[sibling.coords.y][sibling.coords.x].rotation = 5
         }
         matrix[item[0]][item[1]].rotation = 'o'
       } else if (matrix[item[0]][item[1]].kek === 'kek') {
-        player.update_score(100)
-        player.destroy_virus()
+        Player.score += 100
+        Player.destroy_virus()
         matrix[item[0]][item[1]].rotation = 'x'
         matrix[item[0]][item[1]].kek = 'x'
       }
     })
-    board.draw(matrix)
+    Board.draw(matrix)
     try {
       await new Promise(resolve => {
         setTimeout(() => {
@@ -77,32 +81,32 @@ class Game {
           resolve()
         }, 200)
       })
-      return await game.enable_gravity(matrix)
+      return await this.enable_gravity(matrix)
     } catch (err) {
       return Promise.reject(err)
     }
-  };
+  }
 
-  destroy = async (matrix, pill) => {
+  static async destroy(matrix, pill) {
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
     const first_color = pill.color
     const second_color = pill.color2
     let first_flag = []
-    let second_flag = [];
+    let second_flag = []
     possibilities.forEach(p => {
       if (matrix[pill.y + p[0]]) {
         if (matrix[pill.y + p[0]][pill.x + p[1]]?.color === first_color) first_flag.push(p)
         if (matrix[pill.y2 + p[0]][pill.x2 + p[1]]?.color === second_color) second_flag.push(p)
       }
     })
-    let counter1y = 1;
-    let counter1x = 1;
+    let counter1y = 1
+    let counter1x = 1
     let tab1y = [[pill.y, pill.x]]
     let tab1x = [[pill.y, pill.x]]
-    let counter2y = 1;
-    let counter2x = 1;
-    let tab2y = [[pill.y2, pill.x2]];
-    let tab2x = [[pill.y2, pill.x2]];
+    let counter2y = 1
+    let counter2x = 1
+    let tab2y = [[pill.y2, pill.x2]]
+    let tab2x = [[pill.y2, pill.x2]]
     if (first_flag.length) {
       first_flag.forEach(direction => {
         let x = 1
@@ -133,23 +137,23 @@ class Game {
         }
       })
     }
-    console.table(pill)
+    // console.table(pill)
     let final_tab = []
     counter1y >= 4 ? tab1y.forEach(item => final_tab.push(item)) : null
     counter1x >= 4 ? tab1x.forEach(item => final_tab.push(item)) : null
     counter2y >= 4 ? tab2y.forEach(item => final_tab.push(item)) : null
     counter2x >= 4 ? tab2x.forEach(item => final_tab.push(item)) : null
     if (final_tab.length > 0) {
-      console.log('destroying')
       return await this.boom(matrix, final_tab)
     } else return Promise.resolve()
-  };
+  }
 
-  end = (flag) => {
+  static end(flag) {
     if (flag) {
       console.log('won')
     } else {
       console.log('lost')
     }
   }
+
 }

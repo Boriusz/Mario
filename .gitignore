@@ -4,3 +4,6 @@
 .idea/
 .gitattributes
 .editorconfig
+.eslintrc.json
+package.json
+package-lock.json
