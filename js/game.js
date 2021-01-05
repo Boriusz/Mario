@@ -14,7 +14,6 @@ class Game {
   }
 
   enable_gravity = async (matrix) => {
-    let fallen = []
     const waiter = async () => {
       for (let i = 21; i >= 6; i--) {
         for (let k = 0; k <= matrix[i].length; k++) {
@@ -27,23 +26,23 @@ class Game {
                 (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
                   && matrix[i + helper + 1][k - 1] !== 0)
               )) {
-              fallen.push(matrix[i + helper][k].id)
-              matrix[i + helper + 1][k] = matrix[i + helper][k]
-              if (matrix[i + helper + 1][k].coords.y < 21 && Pill.pills[matrix[i + helper + 1][k].id].y < 21) {
-                matrix[i + helper + 1][k].coords.y++
+              if (matrix[i + helper][k].coords.y < 21 && (Pill.pills[matrix[i + helper][k].id].y < 21 || Pill.pills[matrix[i + helper][k].id].y2 < 21)) {
+                matrix[i + helper + 1][k] = matrix[i + helper][k]
                 Pill.pills[matrix[i + helper + 1][k].id].y++
                 Pill.pills[matrix[i + helper + 1][k].id].y2++
+                matrix[i + helper + 1][k].coords.y++
+                matrix[i + helper][k] = 0
+                helper++
+                board.draw(matrix)
+                setTimeout(drop, 20)
               }
-              matrix[i + helper][k] = 0
-              helper++
-              board.draw(matrix)
-              setTimeout(drop, 20)
+
             }
           }
           await drop()
         }
-        board.draw(matrix)
-        console.log(i)
+        const clone = JSON.parse(JSON.stringify(matrix))
+        console.log(clone)
         if (i === 6) return Promise.resolve()
       }
     }
@@ -92,8 +91,8 @@ class Game {
     let second_flag = [];
     possibilities.forEach(p => {
       if (matrix[pill.y + p[0]]) {
-        if ((matrix[pill.y + p[0]][pill.x + p[1]]) && (matrix[pill.y + p[0]][pill.x + p[1]].color === first_color)) first_flag.push(p)
-        if ((matrix[pill.y2 + p[0]][pill.x2 + p[1]]) && (matrix[pill.y2 + p[0]][pill.x2 + p[1]].color === second_color)) second_flag.push(p)
+        if (matrix[pill.y + p[0]][pill.x + p[1]]?.color === first_color) first_flag.push(p)
+        if (matrix[pill.y2 + p[0]][pill.x2 + p[1]]?.color === second_color) second_flag.push(p)
       }
     })
     let counter1y = 1;

@@ -14,7 +14,6 @@ class Pill {
     this.x2 = 14;
   }
 
-  static pill = this
   static pill_counter = 0;
   static pills = []
   static create_pill_in_hand = () => {
