@@ -10,6 +10,7 @@ export default class Game {
   static active = false
   static flag = false
   static game_interval
+  static key_pressed = false
 
   static init() {
     Pill.create_pill_in_hand()
@@ -20,10 +21,10 @@ export default class Game {
 
   static async enable_gravity(matrix) {
     const waiter = async () => {
-      for (let i = 21; i >= 6; i--) {
+      for (let i = 21; i >= 5; i--) {
         for (let k = 0; k <= matrix[i].length; k++) {
           let helper = 0
-          const drop = () => {
+          const drop = async () => {
             if ((matrix[i + helper][k]?.id || matrix[i + helper][k]?.id === 0) && matrix[i + helper + 1] && matrix[i + helper + 1][k] === 0
               && !((matrix[i + helper][k + 1]?.id === matrix[i + helper][k]?.id
                   && matrix[i + helper + 1][k + 1] !== 0)
@@ -41,13 +42,13 @@ export default class Game {
                 Board.draw(matrix)
                 setTimeout(drop, 20)
               }
-
+            } else {
+              return Promise.resolve()
             }
           }
           await drop()
         }
-        // const clone = JSON.parse(JSON.stringify(matrix))
-        if (i === 6) return Promise.resolve()
+        if (i === 5) return new Promise((resolve => setTimeout(resolve, 325)))
       }
     }
     return await waiter()
@@ -99,12 +100,12 @@ export default class Game {
         if (matrix[pill.y2 + p[0]][pill.x2 + p[1]]?.color === second_color) second_flag.push(p)
       }
     })
-    let counter1y = 1
-    let counter1x = 1
+    let counter1y = matrix[pill.y] && matrix[pill.y][pill.x] === 0 ? 0 : 1
+    let counter1x = matrix[pill.y] && matrix[pill.y][pill.x] === 0 ? 0 : 1
     let tab1y = [[pill.y, pill.x]]
     let tab1x = [[pill.y, pill.x]]
-    let counter2y = 1
-    let counter2x = 1
+    let counter2y = matrix[pill.y2] && matrix[pill.y2][pill.x2] === 0 ? 0 : 1
+    let counter2x = matrix[pill.y2] && matrix[pill.y2][pill.x2] === 0 ? 0 : 1
     let tab2y = [[pill.y2, pill.x2]]
     let tab2x = [[pill.y2, pill.x2]]
     if (first_flag.length) {
@@ -144,8 +145,13 @@ export default class Game {
     counter2y >= 4 ? tab2y.forEach(item => final_tab.push(item)) : null
     counter2x >= 4 ? tab2x.forEach(item => final_tab.push(item)) : null
     if (final_tab.length > 0) {
-      return await this.boom(matrix, final_tab)
-    } else return Promise.resolve()
+      await this.boom(matrix, final_tab)
+      for (const pill of Pill.pills) {
+        await this.destroy(matrix, pill)
+      }
+    }
+    return Promise.resolve()
+
   }
 
   static end(flag) {

@@ -105,23 +105,7 @@ export default class Mario {
         Mario.setup()
         pill.fall(Board.matrix)
         Game.flag = true
-        document.onkeydown = (e) => {
-          if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') Pill.pills[Pill.pills.length - 2].move_left(Board.matrix)
-          else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') Pill.pills[Pill.pills.length - 2].move_right(Board.matrix)
-          else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') Pill.pills[Pill.pills.length - 2].rotate(false, Board.matrix)
-          else if (e.key === 'Shift') Pill.pills[Pill.pills.length - 2].rotate(true, Board.matrix)
-          else if (e.code === 'ArrowDown') Pill.pills[Pill.pills.length - 2].fall(Board.matrix, true)
-          else if (e.code === 'Space') {
-            if (!Game.active) {
-              clearInterval(Game.game_interval)
-              Game.active = true
-              Mario.throw(Pill.pills[Pill.pills.length - 1])
-            } else {
-              clearInterval(Game.game_interval)
-              Game.active = true
-            }
-          }
-        }
+        Game.key_pressed = false
       }, function () {
         pill.fall(Board.matrix)
         Game.game_interval = setInterval(() => {

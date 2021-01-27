@@ -20,18 +20,24 @@ Board.matrix.forEach(column => {
   })
 })
 
+document.onkeyup = () => {
+  Game.flag ? Game.key_pressed = false : null
+}
 document.onkeydown = (e) => {
-  let item = Pill.pills
-  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') item[item.length - 2]?.move_left(Board.matrix)
-  else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') item[item.length - 2]?.move_right(Board.matrix)
-  else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') item[item.length - 2]?.rotate(false, Board.matrix)
-  else if (e.key === 'Shift') item[item.length - 2]?.rotate(true, Board.matrix)
-  else if (e.code === 'ArrowDown') item[item.length - 2]?.fall(Board.matrix, true)
+  if (Game.key_pressed) return
+  Game.key_pressed = true
+  if (e.key === 'a') console.log('a')
+  let item = Pill.pills[Pill.pills.length - 2]
+  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') item?.move_left(Board.matrix)
+  else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') item?.move_right(Board.matrix)
+  else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') item?.rotate(false, Board.matrix)
+  else if (e.key === 'Shift') item?.rotate(true, Board.matrix)
+  else if (e.code === 'ArrowDown') item?.fall(Board.matrix, true)
   else if (e.code === 'Space') {
     if (!Game.active) {
       clearInterval(Game.game_interval)
       Game.active = true
-      Mario.throw(item[item.length - 1])
+      Mario.throw(Pill.pills[Pill.pills.length - 1])
     } else {
       clearInterval(Game.game_interval)
       Game.active = true

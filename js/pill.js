@@ -68,14 +68,12 @@ export default class Pill {
       matrix[this.y][this.x].state = 0
       matrix[this.y2][this.x2].state = 0
       Game.flag = false
-      document.onkeydown = null
+      Game.key_pressed = true
       clearInterval(Game.game_interval)
       try {
         await Game.destroy(matrix, this)
         // eslint-disable-next-line no-unused-vars
-        for (const item of Pill.pills) {
-          await Game.destroy(matrix, item)
-        }
+
         if (this.y === 6 && this.y2 === 6) Game.end(false)
         else if (Virus.viruses.length === 0) Game.end(true)
         else {
