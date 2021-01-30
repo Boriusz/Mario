@@ -17,7 +17,6 @@ export default class Game {
   static keyPressed = false
 
   static init() {
-    localStorage.setItem('topScore', 400)
     Pill.createPillInHand()
     Virus.createViruses(4)
     Board.appendVirus(Virus.viruses)
