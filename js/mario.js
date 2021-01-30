@@ -6,6 +6,8 @@ import Pill from './pill.js'
 
 export default class Mario {
 
+  static isThrowing = false
+
   static setup() {
     Board.matrix[6][14] = 0
     Board.matrix[7][14] = 0
@@ -15,7 +17,18 @@ export default class Mario {
     Board.matrix[6][14] = 'up_3'
   }
 
+  static weirdDrop(pill) {
+    Board.matrix[pill.y + 1][pill.x] = pill.pieces[0]
+    pill.y++
+    Board.matrix[pill.y2 + 1][pill.x2] = pill.pieces[1]
+    pill.y2++
+    Board.matrix[pill.y - 1][pill.x] = 0
+    Board.matrix[pill.y2 - 1][pill.x2] = 0
+    Board.draw(Board.matrix)
+  }
+
   static throw(pill) {
+    Mario.isThrowing = true
     Game.flag = false
     Game.active = true
     const animations = [
@@ -23,14 +36,14 @@ export default class Mario {
         pill.rotate(false, Board.matrix)
       },
       function () {
-        pill.move_up(Board.matrix)
+        pill.moveUp(Board.matrix)
         pill.rotate(false, Board.matrix)
       },
       function () {
         pill.rotate(false, Board.matrix)
       },
       function () {
-        pill.move_up(Board.matrix)
+        pill.moveUp(Board.matrix)
         Board.matrix[4][14] = 0
         Board.matrix[5][14] = 0
         Board.matrix[6][14] = 0
@@ -78,14 +91,14 @@ export default class Mario {
       function () {
         pill.rotate(false, Board.matrix)
       }, function () {
-        pill.move_left(Board.matrix)
+        pill.moveLeft(Board.matrix)
         pill.rotate(false, Board.matrix)
       },
       function () {
         pill.rotate(false, Board.matrix)
       },
       function () {
-        pill.move_left(Board.matrix)
+        pill.moveLeft(Board.matrix)
         pill.fall(Board.matrix)
         pill.rotate(false, Board.matrix)
       },
@@ -93,29 +106,31 @@ export default class Mario {
         pill.rotate(false, Board.matrix)
       },
       function () {
-        pill.move_left(Board.matrix)
+        pill.moveLeft(Board.matrix)
         pill.rotate(false, Board.matrix)
       },
       function () {
-        pill.fall(Board.matrix)
+        Mario.weirdDrop(pill)
       }, function () {
-        pill.fall(Board.matrix)
+        Mario.weirdDrop(pill)
       }, function () {
-        Pill.create_pill_in_hand()
+        Pill.createPillInHand()
         Mario.setup()
-        pill.fall(Board.matrix)
+        Mario.weirdDrop(pill)
+        Mario.weirdDrop(pill)
         Game.flag = true
-        Game.key_pressed = false
+        Game.keyPressed = false
       }, function () {
-        pill.fall(Board.matrix)
-        Game.game_interval = setInterval(() => {
+        Mario.weirdDrop(pill)
+        Mario.isThrowing = false
+        Game.gameInterval = setInterval(() => {
           pill.fall(Board.matrix)
         }, 500)
       },
     ]
     const timer = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-    async function perform_animation() {
+    async function performAnimation() {
       for (let i = 0; i <= animations.length; i++) {
         if (i === animations.length) {
           pill.flag = true
@@ -126,7 +141,7 @@ export default class Mario {
       }
     }
 
-    perform_animation()
+    performAnimation()
   }
 
 

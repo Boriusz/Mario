@@ -32,6 +32,73 @@ body {
   top: 0;
 }
 
+#scoreHolder {
+  z-index: 2;
+  width: 270px;
+  height: 187px;
+  margin: 0;
+  padding: 0;
+  left: 48px;
+  top: 56px;
+}
+
+#score {
+  z-index: 10;
+  background-color: black;
+  position: absolute;
+  width: 168px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  left: 120px;
+  top: 192px;
+  color: white;
+}
+
+#stageCompleted img {
+  z-index: 1000;
+  visibility: hidden;
+  position: absolute;
+  width: 400px;
+  top: 170px;
+  left: 300px;
+}
+
+#gameOver img {
+  z-index: 1000;
+  visibility: hidden;
+  position: absolute;
+  width: 400px;
+  top: 170px;
+  left: 300px;
+}
+
+#sadMario img {
+  position: absolute;
+  left: 720px;
+  top: 72px;
+  visibility: hidden;
+  z-index: 1000;
+}
+
+#magnifier {
+  position: absolute;
+  top: 300px;
+}
+
+#top {
+  z-index: 11;
+  background-color: black;
+  position: absolute;
+  width: 168px;
+  height: 24px;
+  margin: 0;
+  padding: 0;
+  color: white;
+  left: 121px;
+  top: 119px;
+}
+
 .row {
   width: 100%;
   height: 24px;
@@ -43,7 +110,59 @@ body {
 
 .item {
   display: inline-block;
-  /*box-shadow: inset 0 0 0 1px #f00;*/
+  /* box-shadow: inset  0 0 1px #f00; */
   width: 24px;
+  height: 24px;
+}
+
+.virus {
+  width: auto;
+  height: auto;
+}
+
+#virus_br {
+  background: url(../img/lupa/br/1.png) no-repeat;
+  position: absolute;
+  top: 90px;
+  left: 50px;
+}
+
+#virus_yl {
+  background: url(../img/lupa/yl/1.png) no-repeat;
+  position: absolute;
+  top: 40px;
+  left: 170px;
+}
+
+#virus_bl {
+  background: url(../img/lupa/bl/1.png) no-repeat;
+  position: absolute;
+  top: 150px;
+  left: 152px;
+}
+
+#details {
+  position: absolute;
+  top: 298px;
+  left: 696px;
+  width: 200px;
+  height: 250px;
+}
+
+#level {
+  z-index: 1000;
+  position: absolute;
+  top: 62px;
+  left: 144px;
+  width: 48px;
+  height: 24px;
+}
+
+#virus-counter {
+  z-index: 1000;
+  position: absolute;
+  top: 206px;
+  left: 144px;
+  width: 48px;
   height: 24px;
 }

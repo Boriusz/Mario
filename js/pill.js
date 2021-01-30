@@ -23,14 +23,14 @@ export default class Pill {
   static pill_counter = 0
   static pills = []
 
-  static create_pill_in_hand() {
-    Pill.pills.push(new Pill(Pill.pill_counter, Randoms.random_color(), Randoms.random_color(), 1, 1))
-    Board.append_piece_to_hand(Pill.pills[Pill.pills.length - 1].pieces)
+  static createPillInHand() {
+    Pill.pills.push(new Pill(Pill.pill_counter, Randoms.randomColor(), Randoms.randomColor(), 1, 1))
+    Board.appendPieceToHand(Pill.pills[Pill.pills.length - 1].pieces)
     Pill.pill_counter++
   }
 
 
-  rotation_update(arg, arg2) {
+  rotationUpdate(arg, arg2) {
     this.rotation = arg
     this.rotation2 = arg2
   }
@@ -64,18 +64,17 @@ export default class Pill {
 
 
   async fall(matrix, flag = false) {
+    if (Mario.isThrowing) return
     if (this.collide(matrix)) {
       matrix[this.y][this.x].state = 0
       matrix[this.y2][this.x2].state = 0
       Game.flag = false
-      Game.key_pressed = true
-      clearInterval(Game.game_interval)
+      Game.keyPressed = true
+      clearInterval(Game.gameInterval)
       try {
         await Game.destroy(matrix, this)
-        // eslint-disable-next-line no-unused-vars
-
         if (this.y === 6 && this.y2 === 6) Game.end(false)
-        else if (Virus.viruses.length === 0) Game.end(true)
+        else if (Virus.virusCounter === 0) Game.end(true)
         else {
           Mario.throw(Pill.pills[Pill.pills.length - 1])
         }
@@ -83,7 +82,7 @@ export default class Pill {
         console.log(e)
       }
     } else {
-      flag ? clearInterval(Game.game_interval) : null
+      flag ? clearInterval(Game.gameInterval) : null
       flag ? Game.active = false : null
       this.y++
       this.y2++
@@ -93,7 +92,7 @@ export default class Pill {
       matrix[this.y2 - 1][this.x2] = 0
       Board.draw(matrix)
       if (flag) {
-        Game.game_interval = setInterval(() => {
+        Game.gameInterval = setInterval(() => {
           this.fall(Board.matrix)
         }, 20)
       }
@@ -102,8 +101,8 @@ export default class Pill {
 
   rotate(direction, matrix) { //false UP/lewo true Shift/prawo
     if (Game.active) {
-      if (this?.rotation === 1 && matrix[this.y - 1][this.x] === 0 && (Game.flag ? (this.x === 3 || this.x === 4 ? this.y > 5 : this.y > 6) : true)) {
-        this.rotation_update(0, 2)
+      if (this?.rotation === 1 && matrix[this.y - 1] && matrix[this.y - 1][this.x] === 0 && (Game.flag ? (this.x === 3 || this.x === 4 ? this.y > 5 : this.y > 6) : true)) {
+        this.rotationUpdate(0, 2)
         this.y2--
         this.x2--
         direction ? this.switch() : null
@@ -112,7 +111,7 @@ export default class Pill {
         matrix[this.y][this.x + 1] = 0
         Board.draw(matrix)
       } else if (this?.rotation === 0 && matrix[this.y][this.x + 1] === 0 && this.x < 7) {
-        this.rotation_update(1, 3)
+        this.rotationUpdate(1, 3)
         this.y2 = this.y
         this.x2 = this.x + 1
         !direction ? this.switch() : null
@@ -122,7 +121,7 @@ export default class Pill {
         Board.draw(matrix)
       } else if (this?.rotation === 0 && matrix[this.y][this.x - 1] === 0 &&
         (!matrix[this.y][this.x + 1] || this.x === 7)) {
-        this.rotation_update(1, 3)
+        this.rotationUpdate(1, 3)
         matrix[this.y2][this.x2] = 0
         this.y2++
         this.x--
@@ -149,21 +148,21 @@ export default class Pill {
     Board.draw(matrix)
   }
 
-  move_left(matrix) {
-    if (Game.active) {
+  moveLeft(matrix, flag = true) {
+    if (Game.active && (flag ? true : this.y > 5)) {
       if (this.rotation === 1 && matrix[this.y][this.x - 1] === 0) this.move(matrix, -1, false, this)
       else if (this.rotation === 0 && matrix[this.y][this.x - 1] === 0 && matrix[this.y2][this.x2 - 1] === 0 && (this.y === 6 ? this.x === 4 : true)) this.move(matrix, -1, true, this)
     }
   }
 
-  move_right(matrix) {
-    if (Game.active) {
+  moveRight(matrix, flag = true) {
+    if (Game.active && (flag ? true : this.y > 5)) {
       if (this.rotation === 1 && matrix[this.y2][this.x2 + 1] === 0 && matrix[this.y2][this.x2 + 1] === 0 && this.x2 < 7) this.move(matrix, 1, false, this)
       else if (matrix[this.y][this.x + 1] === 0 && matrix[this.y - 1][this.x + 1] === 0 && this.x2 < 7 && (this.y === 6 ? this.x === 3 : true)) this.move(matrix, 1, true, this)
     }
   }
 
-  move_up(matrix) {
+  moveUp(matrix) {
     this.y--
     this.y2--
     matrix[this.y][this.x] = this.pieces[0]

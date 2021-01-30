@@ -7,7 +7,7 @@ export default class Randoms {
     'bl'
   ]
 
-  static random_color() {
+  static randomColor() {
     return this.colors[Math.floor(Math.random() * this.colors.length)]
   }
 

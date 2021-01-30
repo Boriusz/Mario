@@ -3,23 +3,28 @@
 import Virus from './virus.js'
 import Pill from './pill.js'
 import Board from './board.js'
-import Player from './player.js'
+import {player} from './player.js'
+
+const stageCompleted = document.querySelector('#stageCompleted').children[0]
+const gameOver = document.querySelector('#gameOver').children[0]
+const sadMario = document.querySelector('#sadMario').children[0]
 
 export default class Game {
-
+  static over = false
   static active = false
   static flag = false
-  static game_interval
-  static key_pressed = false
+  static gameInterval
+  static keyPressed = false
 
   static init() {
-    Pill.create_pill_in_hand()
-    Virus.create_viruses(4)
-    Board.append_virus(Virus.viruses)
+    localStorage.setItem('topScore', 400)
+    Pill.createPillInHand()
+    Virus.createViruses(4)
+    Board.appendVirus(Virus.viruses)
   }
 
 
-  static async enable_gravity(matrix) {
+  static async enableGravity(matrix) {
     const waiter = async () => {
       for (let i = 21; i >= 5; i--) {
         for (let k = 0; k <= matrix[i].length; k++) {
@@ -32,7 +37,7 @@ export default class Game {
                 (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
                   && matrix[i + helper + 1][k - 1] !== 0)
               )) {
-              if (matrix[i + helper][k].coords.y < 21 && (Pill.pills[matrix[i + helper][k].id].y < 21 || Pill.pills[matrix[i + helper][k].id].y2 < 21)) {
+              if (matrix[i + helper][k].coords.y < 21) {
                 matrix[i + helper + 1][k] = matrix[i + helper][k]
                 Pill.pills[matrix[i + helper + 1][k].id].y++
                 Pill.pills[matrix[i + helper + 1][k].id].y2++
@@ -66,10 +71,9 @@ export default class Game {
         }
         matrix[item[0]][item[1]].rotation = 'o'
       } else if (matrix[item[0]][item[1]].kek === 'kek') {
-        Player.score += 100
-        Player.destroy_virus()
         matrix[item[0]][item[1]].rotation = 'x'
         matrix[item[0]][item[1]].kek = 'x'
+        player.destroyVirus(matrix[item[0]][item[1]])
       }
     })
     Board.draw(matrix)
@@ -82,7 +86,7 @@ export default class Game {
           resolve()
         }, 200)
       })
-      return await this.enable_gravity(matrix)
+      return await this.enableGravity(matrix)
     } catch (err) {
       return Promise.reject(err)
     }
@@ -90,14 +94,14 @@ export default class Game {
 
   static async destroy(matrix, pill) {
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
-    const first_color = pill.color
-    const second_color = pill.color2
-    let first_flag = []
-    let second_flag = []
+    const firstColor = pill.color
+    const secondColor = pill.color2
+    let firstFlag = []
+    let secondFlag = []
     possibilities.forEach(p => {
       if (matrix[pill.y + p[0]]) {
-        if (matrix[pill.y + p[0]][pill.x + p[1]]?.color === first_color) first_flag.push(p)
-        if (matrix[pill.y2 + p[0]][pill.x2 + p[1]]?.color === second_color) second_flag.push(p)
+        if (matrix[pill.y + p[0]][pill.x + p[1]]?.color === firstColor) firstFlag.push(p)
+        if (matrix[pill.y2 + p[0]][pill.x2 + p[1]]?.color === secondColor) secondFlag.push(p)
       }
     })
     let counter1y = matrix[pill.y] && matrix[pill.y][pill.x] === 0 ? 0 : 1
@@ -108,11 +112,11 @@ export default class Game {
     let counter2x = matrix[pill.y2] && matrix[pill.y2][pill.x2] === 0 ? 0 : 1
     let tab2y = [[pill.y2, pill.x2]]
     let tab2x = [[pill.y2, pill.x2]]
-    if (first_flag.length) {
-      first_flag.forEach(direction => {
+    if (firstFlag.length) {
+      firstFlag.forEach(direction => {
         let x = 1
         if (matrix[pill.y + direction[0] * x]) {
-          while (matrix[pill.y + (direction[0] * x)][pill.x + (direction[1] * x)]?.color === first_color) {
+          while (matrix[pill.y + (direction[0] * x)][pill.x + (direction[1] * x)]?.color === firstColor) {
             direction[0] !== 0 ? counter1y++ : counter1x++
             direction[0] !== 0 ? tab1y.push([pill.y + (direction[0] * x), pill.x + (direction[1] * x)]) : tab1x.push([pill.y + (direction[0] * x), pill.x + (direction[1] * x)])
             x++
@@ -123,11 +127,11 @@ export default class Game {
         }
       })
     }
-    if (second_flag.length) {
-      second_flag.forEach(direction => {
+    if (secondFlag.length) {
+      secondFlag.forEach(direction => {
         let x = 1
         if (matrix[pill.y2 + direction[0] * x]) {
-          while (matrix[pill.y2 + (direction[0] * x)][pill.x2 + (direction[1] * x)]?.color === second_color) {
+          while (matrix[pill.y2 + (direction[0] * x)][pill.x2 + (direction[1] * x)]?.color === secondColor) {
             direction[0] !== 0 ? counter2y++ : counter2x++
             direction[0] !== 0 ? tab2y.push([pill.y2 + (direction[0] * x), pill.x2 + (direction[1] * x)]) : tab2x.push([pill.y2 + (direction[0] * x), pill.x2 + (direction[1] * x)])
             x++
@@ -138,14 +142,14 @@ export default class Game {
         }
       })
     }
-    // console.table(pill)
-    let final_tab = []
-    counter1y >= 4 ? tab1y.forEach(item => final_tab.push(item)) : null
-    counter1x >= 4 ? tab1x.forEach(item => final_tab.push(item)) : null
-    counter2y >= 4 ? tab2y.forEach(item => final_tab.push(item)) : null
-    counter2x >= 4 ? tab2x.forEach(item => final_tab.push(item)) : null
-    if (final_tab.length > 0) {
-      await this.boom(matrix, final_tab)
+    let finalTab = []
+    console.log(tab1y, tab1x, tab2y, tab2x)
+    counter1y >= 4 ? tab1y.forEach(item => finalTab.push(item)) : null
+    counter1x >= 4 ? tab1x.forEach(item => finalTab.push(item)) : null
+    counter2y >= 4 ? tab2y.forEach(item => finalTab.push(item)) : null
+    counter2x >= 4 ? tab2x.forEach(item => finalTab.push(item)) : null
+    if (finalTab.length > 0) {
+      await this.boom(matrix, finalTab)
       for (const pill of Pill.pills) {
         await this.destroy(matrix, pill)
       }
@@ -156,9 +160,15 @@ export default class Game {
 
   static end(flag) {
     if (flag) {
-      console.log('won')
+      stageCompleted.style.visibility = 'visible'
+      player.endGame()
+      setTimeout(() => {
+        Board.draw(Board.matrix)
+      }, 2200)
     } else {
-      console.log('lost')
+      gameOver.style.visibility = 'visible'
+      Game.over = true
+      sadMario.style.visibility = 'visible'
     }
   }
 
