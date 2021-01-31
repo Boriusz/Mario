@@ -1,6 +1,5 @@
 'use strict'
 
-import Virus from './virus.js'
 import Pill from './pill.js'
 import Board from './board.js'
 import {player} from './player.js'
@@ -15,13 +14,6 @@ export default class Game {
   static flag = false
   static gameInterval
   static keyPressed = false
-
-  static init() {
-    if (!localStorage.getItem('topScore')) localStorage.setItem('topScore', '000')
-    Pill.createPillInHand()
-    Virus.createViruses(4)
-    Board.appendVirus(Virus.viruses)
-  }
 
 
   static async enableGravity(matrix) {
@@ -93,34 +85,39 @@ export default class Game {
   }
 
   static async destroy(matrix, pill) {
+    const {x2, color, y2, id, color2, y, x: x1} = pill
+    if (pill.y > 21) pill.y = 21
+    if (pill.y2 > 21) pill.y2 = 21
+    const firstHalf = matrix[y] && matrix[y][x1]?.id === id
+    const secondHalf = matrix[y2] && matrix[y2][x2]?.id === id
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
-    const firstColor = pill.color
-    const secondColor = pill.color2
+    const firstColor = color
+    const secondColor = color2
     let firstFlag = []
     let secondFlag = []
     possibilities.forEach(p => {
-      if (matrix[pill.y + p[0]]) {
-        if (matrix[pill.y + p[0]][pill.x + p[1]]?.color === firstColor) firstFlag.push(p)
-        if (matrix[pill.y2 + p[0]][pill.x2 + p[1]]?.color === secondColor) secondFlag.push(p)
+      if (matrix[y + p[0]]) {
+        firstHalf ? (matrix[y + p[0]][x1 + p[1]]?.color === firstColor ? firstFlag.push(p) : null) : null
+        secondHalf ? (matrix[y2 + p[0]][x2 + p[1]]?.color === secondColor ? secondFlag.push(p) : null) : null
       }
     })
-    let counter1y = matrix[pill.y] && matrix[pill.y][pill.x] === 0 ? 0 : 1
-    let counter1x = matrix[pill.y] && matrix[pill.y][pill.x] === 0 ? 0 : 1
-    let tab1y = [[pill.y, pill.x]]
-    let tab1x = [[pill.y, pill.x]]
-    let counter2y = matrix[pill.y2] && matrix[pill.y2][pill.x2] === 0 ? 0 : 1
-    let counter2x = matrix[pill.y2] && matrix[pill.y2][pill.x2] === 0 ? 0 : 1
-    let tab2y = [[pill.y2, pill.x2]]
-    let tab2x = [[pill.y2, pill.x2]]
+    let counter1y = matrix[y] && matrix[y][x1] === 0 ? 0 : 1
+    let counter1x = matrix[y] && matrix[y][x1] === 0 ? 0 : 1
+    let tab1y = [[y, x1]]
+    let tab1x = [[y, x1]]
+    let counter2y = matrix[y2] && matrix[y2][x2] === 0 ? 0 : 1
+    let counter2x = matrix[y2] && matrix[y2][x2] === 0 ? 0 : 1
+    let tab2y = [[y2, x2]]
+    let tab2x = [[y2, x2]]
     if (firstFlag.length) {
       firstFlag.forEach(direction => {
         let x = 1
-        if (matrix[pill.y + direction[0] * x]) {
-          while (matrix[pill.y + (direction[0] * x)][pill.x + (direction[1] * x)]?.color === firstColor) {
+        if (matrix[y + direction[0] * x]) {
+          while (matrix[y + (direction[0] * x)][x1 + (direction[1] * x)]?.color === firstColor) {
             direction[0] !== 0 ? counter1y++ : counter1x++
-            direction[0] !== 0 ? tab1y.push([pill.y + (direction[0] * x), pill.x + (direction[1] * x)]) : tab1x.push([pill.y + (direction[0] * x), pill.x + (direction[1] * x)])
+            direction[0] !== 0 ? tab1y.push([y + (direction[0] * x), x1 + (direction[1] * x)]) : tab1x.push([y + (direction[0] * x), x1 + (direction[1] * x)])
             x++
-            if (!matrix[pill.y + direction[0] * x]) {
+            if (!matrix[y + direction[0] * x]) {
               break
             }
           }
@@ -130,12 +127,12 @@ export default class Game {
     if (secondFlag.length) {
       secondFlag.forEach(direction => {
         let x = 1
-        if (matrix[pill.y2 + direction[0] * x]) {
-          while (matrix[pill.y2 + (direction[0] * x)][pill.x2 + (direction[1] * x)]?.color === secondColor) {
+        if (matrix[y2 + direction[0] * x]) {
+          while (matrix[y2 + (direction[0] * x)][x2 + (direction[1] * x)]?.color === secondColor) {
             direction[0] !== 0 ? counter2y++ : counter2x++
-            direction[0] !== 0 ? tab2y.push([pill.y2 + (direction[0] * x), pill.x2 + (direction[1] * x)]) : tab2x.push([pill.y2 + (direction[0] * x), pill.x2 + (direction[1] * x)])
+            direction[0] !== 0 ? tab2y.push([y2 + (direction[0] * x), x2 + (direction[1] * x)]) : tab2x.push([y2 + (direction[0] * x), x2 + (direction[1] * x)])
             x++
-            if (!matrix[pill.y + direction[0] * x]) {
+            if (!matrix[y + direction[0] * x]) {
               break
             }
           }
@@ -143,7 +140,6 @@ export default class Game {
       })
     }
     let finalTab = []
-    console.log(tab1y, tab1x, tab2y, tab2x)
     counter1y >= 4 ? tab1y.forEach(item => finalTab.push(item)) : null
     counter1x >= 4 ? tab1x.forEach(item => finalTab.push(item)) : null
     counter2y >= 4 ? tab2y.forEach(item => finalTab.push(item)) : null
@@ -161,15 +157,24 @@ export default class Game {
   static end(flag) {
     if (flag) {
       stageCompleted.style.visibility = 'visible'
-      player.endGame()
-      setTimeout(() => {
-        Board.draw(Board.matrix)
-      }, 2200)
     } else {
-      gameOver.style.visibility = 'visible'
       Game.over = true
+      gameOver.style.visibility = 'visible'
       sadMario.style.visibility = 'visible'
     }
+    setTimeout(() => {
+      Board.draw(Board.matrix)
+
+      document.addEventListener('keydown', function gameStarter(e) {
+        if (e.key === 'Control') {
+          player.startGame()
+          document.removeEventListener('keydown', gameStarter)
+        }
+      })
+    }, 2200)
+    player.endGame(flag)
+
+
   }
 
 }

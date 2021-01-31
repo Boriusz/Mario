@@ -20,13 +20,13 @@ export default class Pill {
     this.x2 = 14
   }
 
-  static pill_counter = 0
+  static pillCounter = 0
   static pills = []
 
   static createPillInHand() {
-    Pill.pills.push(new Pill(Pill.pill_counter, Randoms.randomColor(), Randoms.randomColor(), 1, 1))
+    Pill.pills.push(new Pill(Pill.pillCounter, Randoms.randomColor(), Randoms.randomColor(), 1, 1))
     Board.appendPieceToHand(Pill.pills[Pill.pills.length - 1].pieces)
-    Pill.pill_counter++
+    Pill.pillCounter++
   }
 
 
@@ -57,9 +57,10 @@ export default class Pill {
   }
 
   collide(matrix) {
-    if (this.rotation === 1) return !matrix[this.y + 1] || matrix[this.y + 1][this.x] !== 0 ||
-      matrix[this.y2 + 1][this.x2] !== 0
-    else if (this.rotation === 0) return !matrix[this.y + 1] || matrix[this.y + 1][this.x] !== 0
+    const {y2, x2, y, rotation, x} = this
+    if (rotation === 1) return !matrix[y + 1] || matrix[y + 1][x] !== 0 ||
+      matrix[y2 + 1][x2] !== 0
+    else if (rotation === 0) return !matrix[y + 1] || matrix[y + 1][x] !== 0
   }
 
 
@@ -71,19 +72,22 @@ export default class Pill {
       Game.flag = false
       Game.keyPressed = true
       clearInterval(Game.gameInterval)
+      const {pills} = Pill
       try {
         await Game.destroy(matrix, this)
         if (this.y === 6 && this.y2 === 6) Game.end(false)
         else if (Virus.virusCounter === 0) Game.end(true)
         else {
-          Mario.throw(Pill.pills[Pill.pills.length - 1])
+          Mario.throw(pills[pills.length - 1])
         }
       } catch (e) {
+        console.log(pills)
         console.log(e)
       }
     } else {
       flag ? clearInterval(Game.gameInterval) : null
       flag ? Game.active = false : null
+      flag ? console.clear() : null
       this.y++
       this.y2++
       matrix[this.y][this.x] = this.pieces[0]
@@ -136,8 +140,9 @@ export default class Pill {
   move(matrix, where, rotation) {
     this.x += where
     this.x2 += where
-    matrix[this.y][this.x] = this.pieces[0]
-    matrix[this.y2][this.x2] = this.pieces[1]
+    const [first, second] = this.pieces
+    matrix[this.y][this.x] = first
+    matrix[this.y2][this.x2] = second
     if (where > 0) {
       matrix[this.y][this.x - 1] = 0
       rotation ? matrix[this.y2][this.x2 - 1] = 0 : null

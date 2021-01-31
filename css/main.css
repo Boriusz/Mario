@@ -17,7 +17,7 @@ body {
   position: relative;
   min-height: calc(384px * 1.5);
   min-width: calc(640px * 1.5);
-  background: url(../img/pf.png) no-repeat center center fixed;
+  background: url(../img/pf1.png) no-repeat center center fixed;
   background-size: calc(640px * var(--multiplier)) calc(384px * var(--multiplier));
   top: calc(50% - (calc(384px * var(--multiplier)) / 2));
 }
@@ -153,16 +153,17 @@ body {
   z-index: 1000;
   position: absolute;
   top: 62px;
-  left: 144px;
+  right: 5px;
   width: 48px;
   height: 24px;
 }
 
 #virus-counter {
+  display: inline-block;
   z-index: 1000;
   position: absolute;
   top: 206px;
-  left: 144px;
-  width: 48px;
+  right: 5px;
+  width: auto;
   height: 24px;
 }

@@ -2,9 +2,14 @@
 
 import Virus from './virus.js'
 import Board from './board.js'
+import Pill from './pill.js'
+import Mario from './mario.js'
 
 const virusCounter = document.querySelector('#virus-counter')
 const levelDisplay = document.querySelector('#level')
+const stageCompleted = document.querySelector('#stageCompleted').children[0]
+const gameOver = document.querySelector('#gameOver').children[0]
+const container = document.querySelector('#container')
 
 class Player {
   score = 0
@@ -12,6 +17,7 @@ class Player {
 
   destroyVirus(virus) {
     Virus.virusCounter--
+    this.updateDetails()
     Virus.stopMove = true
     Virus.viruses[Virus.viruses.findIndex(el => el === virus)].kek = 'dying'
     setTimeout(() => {
@@ -44,8 +50,34 @@ class Player {
 
   }
 
-  endGame() {
-    console.log('game end')
+  endGame(flag) {
+    if (flag) {
+      this.level++
+    } else {
+      this.score = 0
+      this.level = 0
+    }
+  }
+
+  startGame() {
+    if (!localStorage.getItem('topScore')) localStorage.setItem('topScore', '000')
+    stageCompleted.style.visibility = 'hidden'
+    gameOver.style.visibility = 'hidden'
+    Pill.pills = []
+    Pill.pillCounter = 0
+    Virus.viruses = []
+    Board.matrix = Board.createMatrix()
+    player.updateDetails()
+    Board.draw(Board.matrix)
+    container.style.backgroundImage = `url(./img/pf${player.level}.png)`
+    Pill.createPillInHand()
+    Virus.createViruses(player.level * 4)
+    Board.appendVirus(Virus.viruses)
+    player.updateDetails()
+    Mario.setup()
+    Mario.throw(Pill.pills[Pill.pills.length - 1])
+    Board.draw(Board.matrix)
+
   }
 }
 

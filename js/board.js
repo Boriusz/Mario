@@ -10,12 +10,13 @@ const magnifier = document.querySelector('#magnifier')
 export default class Board {
   static width = 15
   static height = 22
-  static matrix = this.create_matrix()
+  static matrix = this.createMatrix()
 
-  static create_matrix() {
+  static createMatrix() {
     const matrix = []
-    while (this.height--) {
-      if (this.height <= 13) matrix.push(new Array(8).fill(0))
+    let tempHeight = this.height
+    while (tempHeight--) {
+      if (tempHeight <= 13) matrix.push(new Array(8).fill(0))
       else matrix.push(new Array(this.width).fill(0))
     }
     return matrix
