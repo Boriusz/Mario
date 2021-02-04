@@ -2,7 +2,6 @@
 
 import Randoms from './randoms.js'
 import Game from './game.js'
-import {player} from './player.js'
 import {frames} from './variables.js'
 
 const virusContainer = document.querySelector('#magnifier')
@@ -62,7 +61,7 @@ export default class Virus {
   static createViruses = (counter) => {
     Virus.virusCounter = counter
     for (let i = 0; i < counter; i++) {
-      let virus = new Virus(Randoms.colors[i % 3], Randoms.randomize(11, 21), Randoms.randomize(0, 7))
+      let virus = new Virus(Randoms.colors[i % 3], Randoms.randomize(21, 11), Randoms.randomize(7, 0))
       if (Virus.viruses.find(el => el?.y === virus.y && el?.x === virus.x)) {
         i--
       } else {

@@ -88,8 +88,8 @@ export default class Game {
     const {x2, color, y2, id, color2, y, x: x1} = pill
     if (pill.y > 21) pill.y = 21
     if (pill.y2 > 21) pill.y2 = 21
-    const firstHalf = matrix[y] && matrix[y][x1]?.id === id
-    const secondHalf = matrix[y2] && matrix[y2][x2]?.id === id
+    const firstHalf = matrix[y] && matrix[y][x1]?.id === id && matrix[y][x1].color === color
+    const secondHalf = matrix[y2] && matrix[y2][x2]?.id === id && matrix[y2][x2].color === color2
     const possibilities = [[0, -1], [0, 1], [-1, 0], [1, 0]]
     const firstColor = color
     const secondColor = color2

@@ -1,3 +1,4 @@
+'use strict'
 import Board from './board.js'
 import Pill from './pill.js'
 import Game from './game.js'
@@ -5,98 +6,71 @@ import Mario from './mario.js'
 
 export const getAnimations = (pill) => {
   return [
-
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
+    () => pill.rotate(false, Board.matrix),
+    () => {
       pill.moveUp(Board.matrix)
       pill.rotate(false, Board.matrix)
     },
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
+    () => pill.rotate(false, Board.matrix),
+    () => {
       pill.moveUp(Board.matrix)
       Board.matrix[4][14] = 0
       Board.matrix[5][14] = 0
       Board.matrix[6][14] = 0
-
       Board.matrix[5][13] = 'middle_11'
       Board.matrix[5][14] = 'middle_12'
       Board.matrix[6][13] = 'middle_21'
       Board.matrix[6][14] = 'middle_22'
       pill.rotate(false, Board.matrix)
     },
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => {
       pill.rotate(false, Board.matrix)
       Board.matrix[5][13] = 0
       Board.matrix[5][14] = 0
       Board.matrix[6][13] = 0
       Board.matrix[6][14] = 0
-
       Board.matrix[6][14] = 'down_1'
       Board.matrix[7][14] = 'down_2'
     },
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.rotate(false, Board.matrix)
-    }, function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.rotate(false, Board.matrix)
-    }, function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.rotate(false, Board.matrix)
-    }, function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.rotate(false, Board.matrix)
-    }, function () {
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => pill.rotate(false, Board.matrix),
+    () => {
       pill.moveLeft(Board.matrix)
       pill.rotate(false, Board.matrix)
     },
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.moveLeft(Board.matrix)
-      pill.fall(Board.matrix)
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
-      pill.moveLeft(Board.matrix)
-      pill.rotate(false, Board.matrix)
-    },
-    function () {
+    () => pill.rotate(false, Board.matrix),
+    () => {
       Mario.weirdDrop(pill)
-    }, function () {
-      Mario.weirdDrop(pill)
-    }, function () {
+      pill.moveLeft(Board.matrix)
+      pill.fall(pill)
+      pill.rotate(false, Board.matrix)
+    },
+    () => pill.rotate(false, Board.matrix),
+    () => {
+      pill.moveLeft(Board.matrix)
+      pill.rotate(false, Board.matrix)
+    },
+    () => Mario.weirdDrop(pill),
+    () => Mario.weirdDrop(pill),
+    () => Mario.weirdDrop(pill),
+    () => {
       Pill.createPillInHand()
-      Mario.setup()
-      Mario.weirdDrop(pill)
-      Mario.weirdDrop(pill)
       Game.flag = true
       Game.keyPressed = false
-    }, function () {
+      Mario.setup()
       Mario.weirdDrop(pill)
       Mario.isThrowing = false
+      for (const pillson of Pill.pills) {
+        Game.destroy(Board.matrix, pillson)
+      }
       Game.gameInterval = setInterval(() => {
         pill.fall(Board.matrix)
       }, 500)

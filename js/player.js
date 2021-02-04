@@ -4,12 +4,14 @@ import Virus from './virus.js'
 import Board from './board.js'
 import Pill from './pill.js'
 import Mario from './mario.js'
+import Game from './game.js'
 
 const virusCounter = document.querySelector('#virus-counter')
 const levelDisplay = document.querySelector('#level')
 const stageCompleted = document.querySelector('#stageCompleted').children[0]
 const gameOver = document.querySelector('#gameOver').children[0]
 const container = document.querySelector('#container')
+const sadMario = document.querySelector('#sadMario').children[0]
 
 class Player {
   score = 0
@@ -55,7 +57,7 @@ class Player {
       this.level++
     } else {
       this.score = 0
-      this.level = 0
+      this.level = 1
     }
   }
 
@@ -69,6 +71,8 @@ class Player {
     Board.matrix = Board.createMatrix()
     player.updateDetails()
     Board.draw(Board.matrix)
+    Game.over = false
+    sadMario.style.visibility = 'hidden'
     container.style.backgroundImage = `url(./img/pf${player.level}.png)`
     Pill.createPillInHand()
     Virus.createViruses(player.level * 4)
