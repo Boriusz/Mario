@@ -22,7 +22,6 @@ export default class Board {
     return matrix
   }
 
-
   static draw(matrix) {
     this.drawMagnifier()
     scoreHolder.innerHTML = ''
@@ -98,7 +97,7 @@ export default class Board {
   }
 
   static appendVirus(viruses) {
-    viruses.forEach(virus => Board.matrix[virus.y][virus.x] = virus)
+    viruses.forEach(virus => this.matrix[virus.y][virus.x] = virus)
   }
 }
 

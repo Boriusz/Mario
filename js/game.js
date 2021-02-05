@@ -3,6 +3,7 @@
 import Pill from './pill.js'
 import Board from './board.js'
 import {player} from './player.js'
+import Virus from './virus.js'
 
 const stageCompleted = document.querySelector('#stageCompleted').children[0]
 const gameOver = document.querySelector('#gameOver').children[0]
@@ -14,7 +15,6 @@ export default class Game {
   static flag = false
   static gameInterval
   static keyPressed = false
-
 
   static async enableGravity(matrix) {
     const waiter = async () => {
@@ -65,7 +65,7 @@ export default class Game {
       } else if (matrix[item[0]][item[1]].kek === 'kek') {
         matrix[item[0]][item[1]].rotation = 'x'
         matrix[item[0]][item[1]].kek = 'x'
-        player.destroyVirus(matrix[item[0]][item[1]])
+        Virus.destroyVirus(matrix[item[0]][item[1]])
       }
     })
     Board.draw(matrix)
@@ -151,20 +151,18 @@ export default class Game {
       }
     }
     return Promise.resolve()
-
   }
 
   static end(flag) {
     if (flag) {
       stageCompleted.style.visibility = 'visible'
     } else {
-      Game.over = true
+      this.over = true
       gameOver.style.visibility = 'visible'
       sadMario.style.visibility = 'visible'
     }
     setTimeout(() => {
       Board.draw(Board.matrix)
-
       document.addEventListener('keydown', function gameStarter(e) {
         if (e.key === 'Control') {
           player.startGame()
@@ -173,8 +171,5 @@ export default class Game {
       })
     }, 2200)
     player.endGame(flag)
-
-
   }
-
 }

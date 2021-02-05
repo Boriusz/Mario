@@ -3,6 +3,12 @@ import Board from './board.js'
 import Pill from './pill.js'
 import Game from './game.js'
 import Mario from './mario.js'
+import {player} from './player.js'
+
+const menu = document.querySelector('#menu')
+const additionalViruses = document.querySelector('#additional-viruses')
+const pointer = document.querySelector('#pointer')
+const pointer2 = document.querySelector('#pointer2')
 
 export const getAnimations = (pill) => {
   return [
@@ -73,7 +79,7 @@ export const getAnimations = (pill) => {
       }
       Game.gameInterval = setInterval(() => {
         pill.fall(Board.matrix)
-      }, 500)
+      }, 500 / player.speed)
     },
   ]
 }
@@ -101,3 +107,81 @@ export const frames = [
   {bl: {blTop: 160, blLeft: 135}, br: {brTop: 65, brLeft: 65}, yl: {ylTop: 60, ylLeft: 181}},
 ]
 
+
+export const colors = [
+  'br',
+  'yl',
+  'bl'
+]
+
+export const randomColor = () => {
+  return colors[Math.floor(Math.random() * colors.length)]
+}
+
+export const randomize = (max, min) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+
+export const menuControls = (e) => {
+  if (e.key === 'Control') player.startGame()
+  // Zamiana między wyborem wirusów a prędkości
+  else if (e.key === 'ArrowUp') {
+    menu.style.backgroundImage = 'url("./img/start.png")'
+  } else if (e.key === 'ArrowDown') {
+    menu.style.backgroundImage = 'url(./img/start2.png)'
+  } else if (e.key === 'ArrowRight' && menu.style.backgroundImage === 'url("./img/start.png")') { // wybór wirusów
+    if (parseFloat(pointer.style.left) < 688) {
+      player.additionalViruses += 1
+      pointer.style.left = parseFloat(pointer.style.left) + 20.3 + 'px'
+      let tempNumber = '0' + player.additionalViruses
+      additionalViruses.innerHTML = ''
+      tempNumber.split('').forEach(number => {
+        additionalViruses.innerHTML += `<img src="./img/cyfry/${number}.png">`
+      })
+    }
+  } else if (e.key === 'ArrowLeft' && menu.style.backgroundImage === 'url("./img/start.png")') {
+    if (parseFloat(pointer.style.left) > 282) {
+      player.additionalViruses -= 1
+      pointer.style.left = parseFloat(pointer.style.left) - 20.3 + 'px'
+      let tempNumber = '0' + player.additionalViruses
+      additionalViruses.innerHTML = ''
+      tempNumber.split('').forEach(number => {
+        additionalViruses.innerHTML += `<img src="./img/cyfry/${number}.png">`
+      })
+    }
+  } else if (e.key === 'ArrowRight' && menu.style.backgroundImage === 'url("./img/start2.png")') { // wybór prędkości
+    if (parseFloat(pointer2.style.left) < 606) {
+      player.speed += 0.5
+      pointer2.style.left = parseFloat(pointer2.style.left) + 121 + 'px'
+    }
+  } else if (e.key === 'ArrowLeft' && menu.style.backgroundImage === 'url("./img/start2.png")') {
+    if (parseFloat(pointer2.style.left) > 364) {
+      player.speed -= 0.5
+      pointer2.style.left = parseFloat(pointer2.style.left) - 121 + 'px'
+    }
+
+  }
+}
+
+export const gameControls = (e) => {
+  if (Game.keyPressed || !Game.flag) return
+  Game.keyPressed = true
+  setTimeout(() => Game.keyPressed = false, 200)
+  let item = Pill.pills[Pill.pills.length - 2]
+  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') item?.moveLeft(Board.matrix, false)
+  else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') item?.moveRight(Board.matrix, false)
+  else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') item?.rotate(false, Board.matrix)
+  else if (e.key === 'Shift') item?.rotate(true, Board.matrix)
+  else if (e.code === 'ArrowDown') item?.fall(Board.matrix, true)
+  else if (e.code === 'Space') {
+    if (!Game.active) {
+      clearInterval(Game.gameInterval)
+      Game.active = true
+      Mario.throw(Pill.pills[Pill.pills.length - 1])
+    } else {
+      clearInterval(Game.gameInterval)
+      Game.active = true
+    }
+  }
+}

@@ -1,8 +1,10 @@
 'use strict'
 
-import Randoms from './randoms.js'
+import {randomize, colors} from './variables.js'
 import Game from './game.js'
 import {frames} from './variables.js'
+import Board from './board.js'
+import {player} from './player.js'
 
 const virusContainer = document.querySelector('#magnifier')
 const virusBr = document.querySelector('#virus_br')
@@ -50,8 +52,10 @@ export default class Virus {
       for (const child of virusContainer.children) {
         const colorOfChild = [child.id[child.id.length - 2], child.id[child.id.length - 1]].join('')
         if (this.viruses.find(el => el.color === colorOfChild && el.kek === 'dying')) {
+          child.style.backgroundSize = '92px'
           child.style.backgroundImage = `url(./img/lupa/${colorOfChild}/padaka${Math.ceil(this.state / 2)}.png)`
         } else {
+          child.style.backgroundSize = 'auto'
           child.style.backgroundImage = `url(./img/lupa/${colorOfChild}/${this.state}.png)`
         }
       }
@@ -59,16 +63,33 @@ export default class Virus {
   }
 
   static createViruses = (counter) => {
-    Virus.virusCounter = counter
+    this.virusCounter = counter
     for (let i = 0; i < counter; i++) {
-      let virus = new Virus(Randoms.colors[i % 3], Randoms.randomize(21, 11), Randoms.randomize(7, 0))
-      if (Virus.viruses.find(el => el?.y === virus.y && el?.x === virus.x)) {
+      let virus = new Virus(colors[i % 3], randomize(21, 11), randomize(7, 0))
+      if (this.viruses.find(el => el?.y === virus.y && el?.x === virus.x)) {
         i--
       } else {
-        Virus.viruses[i] = virus
+        this.viruses[i] = virus
       }
     }
 
+  }
+
+  static destroyVirus(virus) {
+    this.virusCounter--
+    player.updateDetails()
+    this.stopMove = true
+    this.viruses[this.viruses.findIndex(el => el === virus)].kek = 'dying'
+    setTimeout(() => {
+      this.stopMove = false
+      this.viruses.splice(this.viruses.findIndex(el => el === virus), 1)
+      Board.draw(Board.matrix)
+    }, 2000)
+
+    player.score += 100
+    if (player.score > parseInt(localStorage.getItem('topScore'))) {
+      localStorage.setItem('topScore', player.score.toString())
+    }
   }
 }
 

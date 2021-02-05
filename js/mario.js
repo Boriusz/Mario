@@ -28,7 +28,7 @@ export default class Mario {
   }
 
   static throw(pill) {
-    Mario.isThrowing = true
+    this.isThrowing = true
     Game.flag = false
     Game.active = true
     const timer = ms => new Promise(resolve => setTimeout(resolve, ms))

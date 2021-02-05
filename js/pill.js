@@ -1,7 +1,7 @@
 'use strict'
 
 import Board from './board.js'
-import Randoms from './randoms.js'
+import {randomColor} from './variables.js'
 import Game from './game.js'
 import Mario from './mario.js'
 import Virus from './virus.js'
@@ -24,9 +24,9 @@ export default class Pill {
   static pills = []
 
   static createPillInHand() {
-    Pill.pills.push(new Pill(Pill.pillCounter, Randoms.randomColor(), Randoms.randomColor(), 1, 1))
-    Board.appendPieceToHand(Pill.pills[Pill.pills.length - 1].pieces)
-    Pill.pillCounter++
+    this.pills.push(new Pill(this.pillCounter, randomColor(), randomColor(), 1, 1))
+    Board.appendPieceToHand(this.pills[this.pills.length - 1].pieces)
+    this.pillCounter++
   }
 
 

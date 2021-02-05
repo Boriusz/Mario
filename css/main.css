@@ -12,6 +12,7 @@ body {
 }
 
 #container {
+  visibility: hidden;
   z-index: 1;
   display: inline-block;
   position: relative;
@@ -166,4 +167,45 @@ body {
   right: 5px;
   width: auto;
   height: 24px;
+}
+
+#menu {
+  visibility: visible;
+  z-index: 3000;
+  display: inline-block;
+  position: absolute;
+  min-height: calc(384px * 1.5);
+  min-width: calc(640px * 1.5);
+  background: no-repeat center center fixed;
+  background-size: calc(540px * var(--multiplier)) calc(384px * var(--multiplier));
+  top: calc(50% - (calc(384px * var(--multiplier)) / 2));
+}
+
+#pointer {
+  position: absolute;
+  top: 147px;
+  width: 16px;
+}
+
+#pointer2 {
+  position: absolute;
+  top: 287px;
+  width: 16px;
+}
+
+#speed {
+  background: no-repeat center center;
+  background-size: 50px;
+  top: 120px;
+  right: -38px;
+  position: absolute;
+  display: inline-block;
+  width: 124px;
+  height: 50px;
+}
+
+#additional-viruses {
+  position: absolute;
+  right: 210px;
+  top: 120px;
 }
