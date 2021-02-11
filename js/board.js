@@ -3,9 +3,7 @@
 import {player} from './player.js'
 import Virus from './virus.js'
 
-const scoreHolder = document.querySelector('#score')
-const topScoreHolder = document.querySelector('#top')
-const magnifier = document.querySelector('#magnifier')
+import {topScoreHolder, scoreHolder, magnifier} from './variables.js'
 
 export default class Board {
   static width = 15

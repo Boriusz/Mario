@@ -27,11 +27,7 @@ tempNumber.split('').forEach(number => {
   additionalViruses.innerHTML += `<img src="./img/cyfry/${number}.png">`
 })
 setInterval(Virus.animateViruses, 200)
-document.onkeyup = () => {
-  Game.flag ? Game.keyPressed = false : null
-}
+
 document.onkeydown = (e) => {
   menuControls(e)
 }
-// player.menu()
-// player.startGame()

@@ -7,14 +7,9 @@ import Mario from './mario.js'
 import Game from './game.js'
 import {gameControls, menuControls} from './variables.js'
 
-const menu = document.querySelector('#menu')
-const virusCounter = document.querySelector('#virus-counter')
-const levelDisplay = document.querySelector('#level')
-const stageCompleted = document.querySelector('#stageCompleted').children[0]
-const gameOver = document.querySelector('#gameOver').children[0]
-const container = document.querySelector('#container')
-const sadMario = document.querySelector('#sadMario').children[0]
-const speedContainer = document.querySelector('#speed')
+import {menu, virusCounter, levelDisplay, stageCompleted, gameOver, container, sadMario, speedContainer}
+  from './variables.js'
+
 
 class Player {
   score = 0
@@ -62,6 +57,7 @@ class Player {
       Virus.viruses = []
       Virus.virusCounter = 0
       this.level = 1
+      Board.draw(Board.matrix)
       document.onkeydown = (e) => menuControls(e)
       return
     }
@@ -71,7 +67,7 @@ class Player {
     }
 
     if (!localStorage.getItem('topScore')) localStorage.setItem('topScore', '000')
-    menu.style.visibility = 'hidden/'
+    menu.style.visibility = 'hidden'
     container.style.visibility = 'visible'
     stageCompleted.style.visibility = 'hidden'
     gameOver.style.visibility = 'hidden'

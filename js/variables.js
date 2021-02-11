@@ -5,10 +5,20 @@ import Game from './game.js'
 import Mario from './mario.js'
 import {player} from './player.js'
 
-const menu = document.querySelector('#menu')
 const additionalViruses = document.querySelector('#additional-viruses')
 const pointer = document.querySelector('#pointer')
 const pointer2 = document.querySelector('#pointer2')
+export const menu = document.querySelector('#menu')
+export const scoreHolder = document.querySelector('#score')
+export const topScoreHolder = document.querySelector('#top')
+export const magnifier = document.querySelector('#magnifier')
+export const stageCompleted = document.querySelector('#stageCompleted').children[0]
+export const gameOver = document.querySelector('#gameOver').children[0]
+export const sadMario = document.querySelector('#sadMario').children[0]
+export const virusCounter = document.querySelector('#virus-counter')
+export const levelDisplay = document.querySelector('#level')
+export const container = document.querySelector('#container')
+export const speedContainer = document.querySelector('#speed')
 
 export const getAnimations = (pill) => {
   return [
@@ -165,16 +175,30 @@ export const menuControls = (e) => {
 }
 
 export const gameControls = (e) => {
-  if (Game.keyPressed || !Game.flag) return
-  Game.keyPressed = true
-  setTimeout(() => Game.keyPressed = false, 200)
+  if (Game.keysPressed[e.key] || !Game.flag) return
+  Game.keysPressed = (Game.keysPressed || [])
+  Game.keysPressed[e.key] = true
+  gameControls2()
+  clearInterval(intervalek)
+  intervalek = setInterval(() => gameControls2(), 200)
+}
+
+document.onkeyup = (e) => {
+  Game.keysPressed[e.key] = false
+}
+let intervalek = setInterval(() => {
+  gameControls2()
+}, 200)
+
+export const gameControls2 = () => {
+  if (!Game.flag) return
   let item = Pill.pills[Pill.pills.length - 2]
-  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') item?.moveLeft(Board.matrix, false)
-  else if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') item?.moveRight(Board.matrix, false)
-  else if (e.key === 'w' || e.key === 'W' || e.key === 'ArrowUp') item?.rotate(false, Board.matrix)
-  else if (e.key === 'Shift') item?.rotate(true, Board.matrix)
-  else if (e.code === 'ArrowDown') item?.fall(Board.matrix, true)
-  else if (e.code === 'Space') {
+  if (Game.keysPressed && Game.keysPressed['ArrowLeft']) item?.moveLeft(Board.matrix, false)
+  else if (Game.keysPressed && Game.keysPressed['ArrowRight']) item?.moveRight(Board.matrix, false)
+  else if (Game.keysPressed && Game.keysPressed['ArrowUp']) item?.rotate(false, Board.matrix)
+  else if (Game.keysPressed && Game.keysPressed['Shift']) item?.rotate(true, Board.matrix)
+  else if (Game.keysPressed && Game.keysPressed['ArrowDown']) item?.fall(Board.matrix, true)
+  else if (Game.keysPressed && Game.keysPressed[' ']) {
     if (!Game.active) {
       clearInterval(Game.gameInterval)
       Game.active = true

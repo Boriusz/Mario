@@ -5,9 +5,8 @@ import Board from './board.js'
 import {player} from './player.js'
 import Virus from './virus.js'
 
-const stageCompleted = document.querySelector('#stageCompleted').children[0]
-const gameOver = document.querySelector('#gameOver').children[0]
-const sadMario = document.querySelector('#sadMario').children[0]
+import {stageCompleted, gameOver, sadMario} from './variables.js'
+
 
 export default class Game {
   static over = false
@@ -15,6 +14,8 @@ export default class Game {
   static flag = false
   static gameInterval
   static keyPressed = false
+
+  static keysPressed = []
 
   static async enableGravity(matrix) {
     const waiter = async () => {
@@ -28,8 +29,8 @@ export default class Game {
                 ||
                 (matrix[i + helper][k - 1]?.id === matrix[i + helper][k]?.id
                   && matrix[i + helper + 1][k - 1] !== 0)
+                && matrix[i + helper][k].coords.y < 21
               )) {
-              if (matrix[i + helper][k].coords.y < 21) {
                 matrix[i + helper + 1][k] = matrix[i + helper][k]
                 Pill.pills[matrix[i + helper + 1][k].id].y++
                 Pill.pills[matrix[i + helper + 1][k].id].y2++
@@ -38,14 +39,13 @@ export default class Game {
                 helper++
                 Board.draw(matrix)
                 setTimeout(drop, 20)
-              }
             } else {
               return Promise.resolve()
             }
           }
           await drop()
         }
-        if (i === 5) return new Promise((resolve => setTimeout(resolve, 325)))
+        if (i === 5) return new Promise((resolve => setTimeout(resolve, 500)))
       }
     }
     return await waiter()
@@ -76,7 +76,7 @@ export default class Game {
             matrix[item[0]][item[1]] = 0
           })
           resolve()
-        }, 200)
+        }, 300)
       })
       return await this.enableGravity(matrix)
     } catch (err) {
