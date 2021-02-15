@@ -6,7 +6,6 @@ import {player} from './player.js'
 import Virus from './virus.js'
 
 import {stageCompleted, gameOver, sadMario} from './variables.js'
-import pill from './pill.js'
 
 
 export default class Game {
@@ -60,8 +59,7 @@ export default class Game {
         let flat = matrix.flat()
         let sibling = flat.find(el => el.id === matrix[item[0]][item[1]].id - 100)
         if (sibling) {
-          if (matrix[sibling.coords.y][sibling.coords.x])
-            matrix[sibling.coords.y][sibling.coords.x].rotation = 5
+          matrix[sibling.coords.y][sibling.coords.x].rotation = 5
         }
         matrix[item[0]][item[1]].rotation = 'o'
       } else if (matrix[item[0]][item[1]].kek === 'kek') {
@@ -76,11 +74,6 @@ export default class Game {
         setTimeout(() => {
           items.forEach(item => {
             matrix[item[0]][item[1]] = 0
-            let pillsek = Pill.pills.find(el => (el.y === item[0] && el.x === item[1]) || (el.y2 === item[0] && el.x2 === item[1]))
-            if (pillsek) {
-              pillsek.y = 21
-              pillsek.y2 = 21
-            }
           })
           resolve()
         }, 300)
