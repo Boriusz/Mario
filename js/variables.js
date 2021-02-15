@@ -76,17 +76,19 @@ export const getAnimations = (pill) => {
     },
     () => Mario.weirdDrop(pill),
     () => Mario.weirdDrop(pill),
-    () => Mario.weirdDrop(pill),
-    () => {
+    async () => {
+      Mario.weirdDrop(pill)
+      for (const pillson of Pill.pills) {
+        await Game.destroy(Board.matrix, pillson)
+      }
+    },
+    async () => {
       Pill.createPillInHand()
       Game.flag = true
       Game.keyPressed = false
       Mario.setup()
       Mario.weirdDrop(pill)
       Mario.isThrowing = false
-      for (const pillson of Pill.pills) {
-        Game.destroy(Board.matrix, pillson)
-      }
       Game.gameInterval = setInterval(() => {
         pill.fall(Board.matrix)
       }, 500 / player.speed)

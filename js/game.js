@@ -59,7 +59,11 @@ export default class Game {
         let flat = matrix.flat()
         let sibling = flat.find(el => el.id === matrix[item[0]][item[1]].id - 100)
         if (sibling) {
-          matrix[sibling.coords.y][sibling.coords.x].rotation = 5
+          try {
+            matrix[sibling.coords.y][sibling.coords.x].rotation = 5
+          } catch (e) {
+            console.log(e)
+          }
         }
         matrix[item[0]][item[1]].rotation = 'o'
       } else if (matrix[item[0]][item[1]].kek === 'kek') {
@@ -97,8 +101,16 @@ export default class Game {
     let secondFlag = []
     possibilities.forEach(p => {
       if (matrix[y + p[0]]) {
-        firstHalf ? (matrix[y + p[0]][x1 + p[1]]?.color === firstColor ? firstFlag.push(p) : null) : null
-        secondHalf ? (matrix[y2 + p[0]][x2 + p[1]]?.color === secondColor ? secondFlag.push(p) : null) : null
+        if (firstHalf) {
+          if (matrix[y + p[0]][x1 + p[1]]?.color === firstColor && matrix[y + p[0]][x1 + p[1]]?.state !== 1) {
+            firstFlag.push(p)
+          }
+        }
+        if (secondHalf) {
+          if (matrix[y2 + p[0]][x2 + p[1]]?.color === secondColor && matrix[y2 + p[0]][x2 + p[1]]?.state !== 1) {
+            secondFlag.push(p)
+          }
+        }
       }
     })
     let counter1y = matrix[y] && matrix[y][x1] === 0 ? 0 : 1

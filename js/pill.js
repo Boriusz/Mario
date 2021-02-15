@@ -75,11 +75,7 @@ export default class Pill {
       const {pills} = Pill
       try {
         await Game.destroy(matrix, this)
-        if (this.y === 6 && this.y2 === 6) Game.end(false)
-        else if (Virus.virusCounter === 0) Game.end(true)
-        else {
           Mario.throw(pills[pills.length - 1])
-        }
       } catch (e) {
         console.log(pills)
         console.log(e)

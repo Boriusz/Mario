@@ -3,6 +3,7 @@
 import Board from './board.js'
 import Game from './game.js'
 import {getAnimations} from './variables.js'
+import Virus from './virus.js'
 
 export default class Mario {
 
@@ -28,11 +29,20 @@ export default class Mario {
   }
 
   static throw(pill) {
+    console.log(Board.matrix)
+    if (Board.matrix[6][3] !== 0 || Board.matrix[6][4] !== 0) {
+      Game.end(false)
+      return false
+    } else if (Virus.virusCounter === 0) {
+      Game.end(true)
+      return false
+    }
     this.isThrowing = true
     Game.flag = false
     Game.active = true
     const timer = ms => new Promise(resolve => setTimeout(resolve, ms))
     const animations = getAnimations(pill)
+
     async function performAnimation() {
       for (let i = 0; i <= animations.length; i++) {
         if (i === animations.length) {
