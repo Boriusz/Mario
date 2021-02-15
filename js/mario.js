@@ -29,7 +29,6 @@ export default class Mario {
   }
 
   static throw(pill) {
-    console.log(Board.matrix)
     if (Board.matrix[6][3] !== 0 || Board.matrix[6][4] !== 0) {
       Game.end(false)
       return false
