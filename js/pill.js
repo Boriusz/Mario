@@ -7,6 +7,9 @@ import Mario from './mario.js'
 import Virus from './virus.js'
 
 export default class Pill {
+  static pillCounter = 0
+  static pills = []
+
   constructor(pill_id, color1, color2, rotation, state) {
     this.id = pill_id
     this.color = color1
@@ -18,27 +21,6 @@ export default class Pill {
     this.y2 = 3
     this.x = 13
     this.x2 = 14
-  }
-
-  static pillCounter = 0
-  static pills = []
-
-  static createPillInHand() {
-    this.pills.push(new Pill(this.pillCounter, randomColor(), randomColor(), 1, 1))
-    Board.appendPieceToHand(this.pills[this.pills.length - 1].pieces)
-    this.pillCounter++
-  }
-
-
-  rotationUpdate(arg, arg2) {
-    this.rotation = arg
-    this.rotation2 = arg2
-  }
-
-  switch() {
-    let color = this.color
-    this.color = this.color2
-    this.color2 = color
   }
 
   get pieces() {
@@ -54,6 +36,23 @@ export default class Pill {
           x: this.x2
         }
       }]
+  }
+
+  static createPillInHand() {
+    this.pills.push(new Pill(this.pillCounter, randomColor(), randomColor(), 1, 1))
+    Board.appendPieceToHand(this.pills[this.pills.length - 1].pieces)
+    this.pillCounter++
+  }
+
+  rotationUpdate(arg, arg2) {
+    this.rotation = arg
+    this.rotation2 = arg2
+  }
+
+  switch() {
+    let color = this.color
+    this.color = this.color2
+    this.color2 = color
   }
 
   collide(matrix) {
@@ -75,7 +74,7 @@ export default class Pill {
       const {pills} = Pill
       try {
         await Game.destroy(matrix, this)
-        if (this.y === 6 && this.y2 === 6) Game.end(false)
+        if ((this.y === 6 && (this.x === 3 || this.x === 4)) || (this.y2 === 6 && (this.x2 === 4 || this.x2 === 3))) Game.end(false)
         else if (Virus.virusCounter === 0) Game.end(true)
         else {
           Mario.throw(pills[pills.length - 1])
